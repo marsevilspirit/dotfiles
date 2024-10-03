@@ -113,23 +113,6 @@ alias cman='man -M /usr/share/man/zh_CN'
 alias chrome="google-chrome-stable"
 alias openmd="typora"
 
-export MLOG_SWITCH="TRUE"
-export MLOG_TERMINAL_SWITCH="TRUE"
-export MLOG_TERMINAL_LEVEL="IWEF"
-export MLOG_FILE_SWITCH="FALSE"
-export MLOG_FILE_LEVEL="IWEF"
-export MLOG_FILE_NAME="test_log"
-export MLOG_FILE_PATH="/home/mars/code/cpp_log/"
-export MLOG_DETAILS="TRUE"
-export MLOG_TIME="TRUE"
-
-export MYSQL_HOST="127.0.0.1"
-export MYSQL_USER="root"
-export MYSQL_PASSWORD="661188"
-export MYSQL_DATABASE="chatroom2"
-
-export REDIS_HOST="127.0.0.1"
-
 export PATH=$PATH:$HOME/go/bin
 
 export MY_INSTALL_DIR=$HOME/.local
