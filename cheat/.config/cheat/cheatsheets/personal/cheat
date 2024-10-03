@@ -1,0 +1,17 @@
+# 查看程序的示例用法
+cheat <command>
+
+# 编辑备忘单
+cheat -e <command>
+
+# 列出可用的备忘单
+cheat -l
+
+# 搜索可用的备忘单
+cheat -s <command>
+
+# 获取当前的"cheat"版本
+cheat -v
+
+# 查看"cheat"配置的路径
+cheat -d

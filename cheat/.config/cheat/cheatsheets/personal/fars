@@ -1,0 +1,1 @@
+<command> | curl -F "C=@-" "https://fars.ee/"

@@ -1,0 +1,5 @@
+# 会打开一个新的窗口来显示图片，并在当前目录下加载所有图片
+feh
+
+# 要为不同的显示器设置不同的墙纸，应传递尽可能多的显示器可用的文件路径
+feh --bg-center path/to/file/for/first/monitor path/to/file/for/second/monitor

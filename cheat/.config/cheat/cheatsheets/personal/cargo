@@ -1,0 +1,2 @@
+# 创建一个没有自带git的项目
+cargo new <project> --vcs none

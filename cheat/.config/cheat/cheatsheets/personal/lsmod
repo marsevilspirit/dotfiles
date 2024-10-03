@@ -1,0 +1,5 @@
+# Linux lsmod（英文全拼：list modules）命令用于显示已载入系统的模块。
+# 执行 lsmod 指令，会列出所有已载入系统的模块。
+
+# 查看nvidia模块
+lsmod | grep nvidia

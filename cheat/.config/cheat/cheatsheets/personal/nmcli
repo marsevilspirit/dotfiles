@@ -1,0 +1,9 @@
+---
+tags: [ networking ]
+---
+
+# 展示附近的wifi
+nmcli device wifi list
+
+# 连接wifi
+nmcli device wifi connect <SSID> (password <password>)
