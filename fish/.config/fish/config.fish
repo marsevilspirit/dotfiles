@@ -3,6 +3,8 @@ if status is-interactive
 
     export CHEAT_CONFIG_PATH="~/.config/cheat/conf.yml"
 
+    export PATH="$PATH:$(go env GOPATH)/bin"
+
     # 取消自动补全
     set -g fish_autosuggestion_enabled 0
 

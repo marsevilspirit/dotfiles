@@ -46,9 +46,6 @@ exec --no-startup-id nm-applet
 # wallpaper
 exec --no-startup-id feh --randomize --bg-fill ~/图片/wallpaper/
 
-# 开机自启RSS fluent-reader 
-exec --no-startup-id fluent-reader
-
 # 设置火焰截图
 bindsym $mod+Shift+s exec --no-startup-id flameshot gui 
 
