@@ -21,5 +21,5 @@ function fish_prompt
 
     set -l dollar "$normal\$"
 
-    echo -n -s "$name $cwd$git_info $dollar "
+    echo -n -s "$name:$cwd$git_info $dollar "
 end
