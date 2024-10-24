@@ -122,9 +122,8 @@ vim.schedule(function()
 end)
 
 -- 设置 tab 宽度为 4
-vim.opt.tabstop = 4 -- 制表符的宽度为 4
-vim.opt.shiftwidth = 4 -- 自动缩进时使用 4 个空格
-vim.opt.expandtab = true -- 使用空格代替制表符
+vim.opt.tabstop = 4
+vim.opt.shiftwidth = 4
 
 -- Enable break indent
 vim.opt.breakindent = true
@@ -202,7 +201,10 @@ vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower win
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 
 -- toggle the nvimtree
-vim.keymap.set('n', '<A-m>', '<cmd>NvimTreeToggle<cr>', { desc = 'toggle the nvimtree' })
+vim.keymap.set('n', '<A-m>', '<cmd>NvimTreeToggle<CR>', { desc = 'toggle the nvimtree' })
+
+vim.keymap.set('n', '<C-left>', '<cmd>BufferLineCyclePrev<CR>', { desc = 'prev buffer' })
+vim.keymap.set('n', '<C-right>', '<cmd>BufferLineCycleNext<CR>', { desc = 'next buffer' })
 
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
@@ -948,13 +950,17 @@ require('lazy').setup({
   --  Here are some example plugins that I've included in the Kickstart repository.
   --  Uncomment any of the lines below to enable them (you will need to restart nvim).
   --
-  -- require 'kickstart.plugins.debug',
-  -- require 'kickstart.plugins.indent_line',
-  -- require 'kickstart.plugins.lint',
+  require 'kickstart.plugins.debug',
+  require 'kickstart.plugins.indent_line',
+  require 'kickstart.plugins.lint',
   require 'kickstart.plugins.autopairs',
   require 'kickstart.plugins.nvim-tree',
   require 'kickstart.plugins.vim-wakatime',
-  -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
+  require 'kickstart.plugins.flash',
+  require 'kickstart.plugins.dashboard',
+  require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
+  require 'kickstart.plugins.go',
+  require 'kickstart.plugins.bufferline',
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    This is the easiest way to modularize your config.
