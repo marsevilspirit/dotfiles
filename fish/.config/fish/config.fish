@@ -20,8 +20,8 @@ if status is-interactive
     abbr df duf
     # nvim
     abbr nv nvim
-    # Uxplay
-    abbr uxplay "sudo systemctl start avahi-daemon.service && uxplay"
+    # exit
+    abbr :q exit
 
     # leetcode 每日提醒
     python $HOME/utils/leetcode_notifyV2.py &
