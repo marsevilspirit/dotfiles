@@ -9,7 +9,7 @@ if status is-interactive
     set -g fish_autosuggestion_enabled 0
 
     # neofetch快捷键
-    abbr s neofetch
+    abbr s fastfetch
     # kitty快捷键
     abbr icat "kitty +kitten icat"
     # zoxide
