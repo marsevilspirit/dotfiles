@@ -1,0 +1,5 @@
+set clipboard+=unnamed " 使 IdeaVim 的剪切板与系统剪切板互通
+set which-key             " 启用 Which-Key
+set notimeout             " 禁用超时
+
+imap jk <Esc>
