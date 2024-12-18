@@ -226,12 +226,13 @@ client.placeholder        #84FFFF      #909090     #FFFFFF     #268BD2
 client.background       #ffffff
 
 # 把所有的窗口边框设为 2 像素
-for_window [class="^.*"] border pixel 2 
+for_window [class="^.*"] border pixel 2
 # 去掉标题栏
-new_window 1pixel 
+new_window 1pixel
 
-gaps inner 6
-gaps outer 4
+# 窗口间距
+gaps inner 0
+gaps outer 0
 
 # 不让鼠标跟随焦k
 focus_follows_mouse no

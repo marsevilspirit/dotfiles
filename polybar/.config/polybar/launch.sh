@@ -12,12 +12,6 @@ for monitor in $(xrandr --query | grep ' connected' | cut -d' ' -f1); do
         DP-2)
             MONITOR=$monitor polybar mybar1 2>&1 | tee -a /tmp/polybar.log & disown
             ;;
-        HDMI-0)
-            MONITOR=$monitor polybar mybar2 2>&1 | tee -a /tmp/polybar.log & disown
-            ;;
-        DP-5)
-            MONITOR=$monitor polybar mybar3 2>&1 | tee -a /tmp/polybar.log & disown
-            ;;
     esac
 done
 
