@@ -206,6 +206,9 @@ vim.keymap.set('n', '<A-m>', '<cmd>NvimTreeToggle<CR>', { desc = 'toggle the nvi
 vim.keymap.set('n', '<C-left>', '<cmd>BufferLineCyclePrev<CR>', { desc = 'prev buffer' })
 vim.keymap.set('n', '<C-right>', '<cmd>BufferLineCycleNext<CR>', { desc = 'next buffer' })
 
+vim.keymap.set('n', '<S-J>', '<cmd>BufferLineCycleNext<CR>', { desc = 'next buffer' })
+vim.keymap.set('n', '<S-K>', '<cmd>BufferLineCyclePrev<CR>', { desc = 'prev buffer' })
+
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
 
