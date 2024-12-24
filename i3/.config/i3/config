@@ -35,19 +35,16 @@ exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock --nofork
 exec --no-startup-id nm-applet
 
 # 启动 picom
-exec --no-startup-id picom -b 
+# exec --no-startup-id picom -b 
 
 # fcitx5 autostart
 exec --no-startup-id fcitx5 -d
-
-# nm-applet 
-exec --no-startup-id nm-applet
 
 # wallpaper
 exec --no-startup-id feh --randomize --bg-fill ~/图片/wallpaper/
 
 # 设置火焰截图
-bindsym $mod+Shift+s exec --no-startup-id flameshot gui 
+bindsym $mod+Shift+s exec --no-startup-id flameshot gui
 
 # Use pactl to adjust volume in PulseAudio.
 set $refresh_i3status killall -SIGUSR1 i3status
