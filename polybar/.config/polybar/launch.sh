@@ -9,7 +9,7 @@ while pgrep -u $UID -x polybar >/dev/null; do sleep 1; done
 # 启动 Polybar 实例，针对每个显示器
 for monitor in $(xrandr --query | grep ' connected' | cut -d' ' -f1); do
     case $monitor in
-        eDP-1-1)
+        DP-2)
             MONITOR=$monitor polybar mybar1 2>&1 | tee -a /tmp/polybar.log & disown
             ;;
     esac
