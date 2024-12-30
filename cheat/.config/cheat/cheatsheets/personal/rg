@@ -4,3 +4,6 @@ rg <word> <file>
 # 模糊搜索前缀
 rg '<word>\w*' <file>
 rg '<word>\w+' <file>
+
+# 上下文
+rg -C 5 <word> <file>
