@@ -5,6 +5,8 @@ if status is-interactive
 
     export PATH="$PATH:$(go env GOPATH)/bin"
 
+    export https_proxy=http://127.0.0.1:2017 http_proxy=http://127.0.0.1:2017 all_proxy=socks5://127.0.0.1:2017
+
     # 取消自动补全
     set -g fish_autosuggestion_enabled 0
 
@@ -22,9 +24,6 @@ if status is-interactive
     abbr nv nvim
     # exit
     abbr :q exit
-
-    # leetcode 每日提醒
-    python $HOME/utils/leetcode_notifyV2.py &
 
     if type -q eza 
         abbr ls eza
