@@ -1,6 +1,8 @@
 if status is-interactive
     # Commands to run in interactive sessions can go here
 
+    # theme: Dracula
+
     export CHEAT_CONFIG_PATH="~/.config/cheat/conf.yml"
 
     export PATH="$PATH:$(go env GOPATH)/bin"
