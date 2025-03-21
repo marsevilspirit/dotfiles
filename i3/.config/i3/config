@@ -35,7 +35,7 @@ exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock --nofork
 exec --no-startup-id nm-applet
 
 # 启动 picom
-# exec --no-startup-id picom -b 
+# exec --no-startup-id picom -b
 
 # fcitx5 autostart
 exec --no-startup-id fcitx5 -d
@@ -234,4 +234,4 @@ gaps outer 0
 # 不让鼠标跟随焦k
 focus_follows_mouse no
 
-bindsym $mod+x exec /home/$USER/.config/scripts/lock.sh
+# bindsym $mod+x exec /home/$USER/.config/scripts/lock.sh
