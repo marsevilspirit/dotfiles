@@ -40,8 +40,12 @@ exec --no-startup-id nm-applet
 # fcitx5 autostart
 exec --no-startup-id fcitx5 -d
 
+# exec --no-startup-id copyq
+
 # wallpaper
-exec --no-startup-id feh --randomize --bg-fill ~/图片/wallpaper/
+exec --no-startup-id feh --bg-center ~/pictures/wallpapers/wallhaven-952qod_2560x1600.png \
+   ~/pictures/wallpapers/wallhaven-952qod_2560x1440.png \
+   ~/pictures/wallpapers/wallhaven-952qod_1600x2560.png
 
 # 设置火焰截图
 bindsym $mod+Shift+s exec --no-startup-id flameshot gui
