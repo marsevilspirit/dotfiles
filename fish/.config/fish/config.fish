@@ -2,6 +2,7 @@ if status is-interactive
     # Commands to run in interactive sessions can go here
 
     # theme: Dracula
+    fish_config theme choose "Dracula Official"
 
     export CHEAT_CONFIG_PATH="~/.config/cheat/conf.yml"
 
