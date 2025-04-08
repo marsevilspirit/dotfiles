@@ -8,6 +8,8 @@ if status is-interactive
 
     export PATH="$PATH:$(go env GOPATH)/bin"
 
+    # export PATH="$PATH:/home/mars/utils/cmake-3.26/bin"
+
     #export https_proxy=http://127.0.0.1:2017 http_proxy=http://127.0.0.1:2017 all_proxy=socks5://127.0.0.1:2017
 
     # 取消自动补全
