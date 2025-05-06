@@ -254,7 +254,7 @@ vim.api.nvim_create_autocmd({ 'InsertLeave' }, {
   desc = 'auto save',
   callback = function()
     vim.fn.execute 'silent! write'
-    vim.notify('Autosaved!', vim.log.levels.INFO, {})
+    -- vim.notify('Autosaved!', vim.log.levels.INFO, {})
   end,
 })
 
@@ -1035,8 +1035,6 @@ require('lazy').setup({
   require 'kickstart.plugins.render-markdown',
   require 'kickstart.plugins.cursor',
   require 'kickstart.plugins.goplements',
-  require 'kickstart.plugins.hardtime',
-  require 'kickstart.plugins.notify',
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    This is the easiest way to modularize your config.
