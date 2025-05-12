@@ -1035,6 +1035,7 @@ require('lazy').setup({
   require 'kickstart.plugins.render-markdown',
   require 'kickstart.plugins.cursor',
   require 'kickstart.plugins.goplements',
+  require 'kickstart.plugins.hugo',
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    This is the easiest way to modularize your config.
