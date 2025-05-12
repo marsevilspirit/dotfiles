@@ -1024,7 +1024,6 @@ require('lazy').setup({
   require 'kickstart.plugins.nvim-tree',
   require 'kickstart.plugins.vim-wakatime',
   require 'kickstart.plugins.flash',
-  require 'kickstart.plugins.dashboard',
   require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
   require 'kickstart.plugins.go',
   require 'kickstart.plugins.bufferline',
