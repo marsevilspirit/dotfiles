@@ -168,6 +168,9 @@ vim.opt.scrolloff = 10
 -- See `:help 'confirm'`
 vim.opt.confirm = true
 
+-- views can only be fully collapsed with the global statusline
+vim.opt.laststatus = 3
+
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
 
@@ -1028,13 +1031,13 @@ require('lazy').setup({
   require 'kickstart.plugins.go',
   require 'kickstart.plugins.bufferline',
   require 'kickstart.plugins.markdown-perview',
-  require 'kickstart.plugins.copilot',
   require 'kickstart.plugins.diffview',
   require 'kickstart.plugins.conjure',
   require 'kickstart.plugins.render-markdown',
   require 'kickstart.plugins.cursor',
   require 'kickstart.plugins.goplements',
   require 'kickstart.plugins.hugo',
+  require 'kickstart.plugins.copilot',
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    This is the easiest way to modularize your config.

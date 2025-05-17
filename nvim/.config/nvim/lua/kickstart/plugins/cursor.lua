@@ -5,19 +5,19 @@ return {
   opts = {
     -- add any opts here
     -- for example
-    provider = 'DreamAPI',
-    vendors = {
-      DreamAPI = {
-        __inherited_from = 'openai',
-        api_key_name = 'DREAMAPI_API_KEY',
-        endpoint = 'https://opus.gptuu.com/v1',
-        model = 'gpt-4o', -- your desired model (or use gpt-4o, etc.)
-        timeout = 30000, -- timeout in milliseconds
-        temperature = 0, -- adjust if needed
-        max_tokens = 4096,
-        -- reasoning_effort = "high" -- only supported for reasoning models (o1, etc.)
-      },
-    },
+    provider = 'copilot',
+    -- vendors = {
+    --   DreamAPI = {
+    --     __inherited_from = 'openai',
+    --     api_key_name = 'DREAMAPI_API_KEY',
+    --     endpoint = 'https://opus.gptuu.com/v1',
+    --     model = 'gpt-4o', -- your desired model (or use gpt-4o, etc.)
+    --     timeout = 30000, -- timeout in milliseconds
+    --     temperature = 0, -- adjust if needed
+    --     max_tokens = 4096,
+    --     -- reasoning_effort = "high" -- only supported for reasoning models (o1, etc.)
+    --   },
+    -- },
   },
   -- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
   build = 'make',
