@@ -1029,7 +1029,7 @@ require('lazy').setup({
   require 'kickstart.plugins.flash',
   require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
   require 'kickstart.plugins.go',
-  require 'kickstart.plugins.bufferline',
+  require 'kickstart.plugins.lualine',
   require 'kickstart.plugins.markdown-perview',
   require 'kickstart.plugins.diffview',
   require 'kickstart.plugins.conjure',
@@ -1039,6 +1039,7 @@ require('lazy').setup({
   require 'kickstart.plugins.hugo',
   require 'kickstart.plugins.copilot',
   require 'kickstart.plugins.snacks',
+  require 'kickstart.plugins.music',
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    This is the easiest way to modularize your config.
