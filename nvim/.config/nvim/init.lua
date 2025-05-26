@@ -1029,7 +1029,6 @@ require('lazy').setup({
   require 'kickstart.plugins.flash',
   require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
   require 'kickstart.plugins.go',
-  require 'kickstart.plugins.lualine',
   require 'kickstart.plugins.markdown-perview',
   require 'kickstart.plugins.diffview',
   require 'kickstart.plugins.conjure',
