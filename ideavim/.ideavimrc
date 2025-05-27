@@ -1,5 +1,7 @@
 set clipboard+=unnamed " 使 IdeaVim 的剪切板与系统剪切板互通
 set which-key             " 启用 Which-Key
 set notimeout             " 禁用超时
+set t_Co=256
+set guicursor=n-v-c:block
 
 imap jk <Esc>
