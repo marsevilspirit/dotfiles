@@ -31,8 +31,10 @@ if status is-interactive
     abbr nv nvim
     # exit
     abbr :q exit
+	# playerctl
+	abbr mp playerctl
 
-    if type -q eza 
+    if type -q eza
         abbr ls eza
         abbr ll "eza -l -g --icons"
         abbr lla "ll -a"
