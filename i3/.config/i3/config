@@ -40,7 +40,9 @@ exec --no-startup-id nm-applet
 # fcitx5 autostart
 exec --no-startup-id fcitx5 -d
 
-# exec --no-startup-id copyq
+exec --no-startup-id dunst
+
+exec --no-startup-id copyq
 
 # wallpaper
 exec --no-startup-id feh --bg-center ~/pictures/wallpapers/wallhaven-952qod_2560x1600.png \
