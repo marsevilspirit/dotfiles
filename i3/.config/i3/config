@@ -132,6 +132,12 @@ bindsym $mod+Tab workspace back_and_forth
 bindsym $mod+Shift+Tab workspace prev
 bindsym $mod+Ctrl+Tab workspace next
 
+# 将当前所在工作区移动到右侧显示器
+bindsym $mod+Ctrl+l move workspace to output right
+
+# 将当前所在工作区移动到左侧显示器
+bindsym $mod+Ctrl+h move workspace to output left
+
 # focus the child container
 #bindsym $mod+d focus child
 
@@ -221,15 +227,15 @@ exec_always --no-startup-id $HOME/.config/polybar/launch.sh
 # client.urgent           #2f343a #900000 #ffffff #900000   #900000
 # client.placeholder      #000000 #0c0c0c #ffffff #000000   #0c0c0c
 
-# Theme colors
-# <colorclass>            <border>   <background>   <text>   <indicator>  <child_border>
-client.focused            #84FFFF      #5E81AC     #E5E9F0     #E5E9F0       #ECECEC
-client.focused_inactive   #4C556A      #84FFFF     #2E3440     #000000       #000000
-client.unfocused          #84FFFF      #84FFFF     #171717     #000000       #000000
-client.urgent             #BF616A      #BF616A     #ffffff     #268BD2
-client.placeholder        #84FFFF      #909090     #FFFFFF     #268BD2
+# Tokyo Night theme
+# <colorclass>          <border>   <background>   <text>   <indicator>  <child_border>
+client.focused          #7aa2f7      #1f2335     #c0caf5     #7aa2f7       #7aa2f7
+client.focused_inactive #414868      #1a1b26     #a9b1d6     #414868       #414868
+client.unfocused        #1a1b26      #1a1b26     #a9b1d6     #1a1b26       #1a1b26
+client.urgent           #f7768e      #f7768e     #c0caf5     #f7768e       #f7768e
+client.placeholder      #414868      #1a1b26     #a9b1d6     #414868       #414868
 
-client.background       #ffffff
+client.background       #1a1b26
 
 # 把所有的窗口边框设为 2 像素
 for_window [class="^.*"] border pixel 2
