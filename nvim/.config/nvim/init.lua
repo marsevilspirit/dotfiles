@@ -826,6 +826,8 @@ require('lazy').setup({
       end,
       formatters_by_ft = {
         lua = { 'stylua' },
+        typescript = { 'prettier' },
+        typescriptreact = { 'prettier' },
         -- Conform can also run multiple formatters sequentially
         -- python = { "isort", "black" },
         --
@@ -1052,8 +1054,6 @@ require('lazy').setup({
   require 'kickstart.plugins.hugo',
   require 'kickstart.plugins.copilot',
   require 'kickstart.plugins.snacks',
-  require 'kickstart.plugins.music',
-  require 'kickstart.plugins.zen',
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    This is the easiest way to modularize your config.
