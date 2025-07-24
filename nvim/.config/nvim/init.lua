@@ -93,6 +93,8 @@ vim.g.maplocalleader = ' '
 -- Set to true if you have a Nerd Font installed and selected in the terminal
 vim.g.have_nerd_font = true
 
+vim.g.snacks_animate = false
+
 -- [[ Setting options ]]
 -- See `:help vim.o`
 -- NOTE: You can change these options as you wish!
@@ -777,7 +779,7 @@ require('lazy').setup({
 
       require('mason-lspconfig').setup {
         automatic_enable = {
-          exclude = { 'clangd' },
+          exclude = {},
         },
         ensure_installed = {}, -- explicitly set to an empty table (Kickstart populates installs via mason-tool-installer)
         handlers = {
