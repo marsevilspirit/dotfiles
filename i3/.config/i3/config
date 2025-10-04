@@ -45,7 +45,7 @@ exec --no-startup-id dunst
 exec --no-startup-id copyq
 
 # wallpaper
-exec --no-startup-id feh --bg-center ~/pictures/wallpapers/wallhaven-952qod_2560x1600.png \
+exec --no-startup-id feh --bg-center ~/pictures/wallpapers/tokyo-night.png \
    ~/pictures/wallpapers/wallhaven-952qod_2560x1440.png \
    ~/pictures/wallpapers/wallhaven-952qod_1600x2560.png
 
@@ -249,4 +249,4 @@ gaps outer 0
 # 不让鼠标跟随焦k
 focus_follows_mouse no
 
-# bindsym $mod+x exec /home/$USER/.config/scripts/lock.sh
+bindsym $mod+x exec /home/$USER/dotfiles/script/lock.sh

@@ -12,7 +12,9 @@ if status is-interactive
 
     export PATH="$PATH:/home/mars/.cargo/bin"
 
-    # export https_proxy=http://127.0.0.1:2017 http_proxy=http://127.0.0.1:2017 all_proxy=socks5://127.0.0.1:2017
+    export PATH="$PATH:/home/mars/.local/share/bob/nvim-bin"
+
+    # export https_proxy=http://127.0.0.1:20172 http_proxy=http://127.0.0.1:20171 all_proxy=socks5://127.0.0.1:20170
 
     # 取消自动补全
     set -g fish_autosuggestion_enabled 0
@@ -49,3 +51,6 @@ if status is-interactive
     # thefuck
     thefuck --alias | source
 end
+
+# Generated for envman. Do not edit.
+test -s ~/.config/envman/load.fish; and source ~/.config/envman/load.fish
