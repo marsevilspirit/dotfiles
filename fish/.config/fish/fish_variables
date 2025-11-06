@@ -1,5 +1,8 @@
 # This file contains fish universal variable definitions.
 # VERSION: 3.0
+SETUVAR --export HOMEBREW_NO_ENV_HINTS:1
+SETUVAR --export RUSTUP_DIST_SERVER:https\x3a//mirrors\x2eustc\x2eedu\x2ecn/rust\x2dstatic
+SETUVAR --export RUSTUP_UPDATE_ROOT:https\x3a//mirrors\x2eustc\x2eedu\x2ecn/rust\x2dstatic/rustup
 SETUVAR __fish_initialized:3800
 SETUVAR _fisher_dracula_2F_fish_files:\x7e/\x2econfig/fish/themes/Dracula\x20Official\x2etheme\x1e\x7e/\x2econfig/fish/conf\x2ed/dracula\x2efish
 SETUVAR _fisher_ik11235_2F_wakatime_2E_fish_files:\x7e/\x2econfig/fish/conf\x2ed/wakatime\x2efish
@@ -33,7 +36,7 @@ SETUVAR fish_color_selection:\x2d\x2dbackground\x3d44475a
 SETUVAR fish_color_status:ff5555
 SETUVAR fish_color_user:8be9fd
 SETUVAR fish_color_valid_path:\x2d\x2dunderline
-SETUVAR fish_complete_path:/usr/share/fish/completions
+SETUVAR fish_complete_path:/usr/share/fish/completions\x1e/opt/homebrew/Cellar/fish/4\x2e1\x2e2/share/fish/completions
 SETUVAR fish_greeting:\x1d
 SETUVAR fish_key_bindings:fish_default_key_bindings
 SETUVAR fish_pager_color_background:\x1d
@@ -49,4 +52,4 @@ SETUVAR fish_pager_color_selected_background:\x2d\x2dbackground\x3d44475a
 SETUVAR fish_pager_color_selected_completion:f8f8f2
 SETUVAR fish_pager_color_selected_description:6272a4
 SETUVAR fish_pager_color_selected_prefix:8be9fd
-SETUVAR fish_user_paths:/home/mars/go
+SETUVAR fish_user_paths:/Users/mars/\x2ecargo/bin\x1e/home/mars/go
