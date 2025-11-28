@@ -1,0 +1,6 @@
+config-file = theme
+
+font-size = 19
+shell-integration-features = no-cursor
+cursor-style = block
+cursor-style-blink = false
