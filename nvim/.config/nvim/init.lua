@@ -1028,11 +1028,8 @@ require('lazy').setup({
   require 'kickstart.plugins.go',
   require 'kickstart.plugins.markdown-perview',
   require 'kickstart.plugins.diffview',
-  require 'kickstart.plugins.conjure',
   require 'kickstart.plugins.render-markdown',
-  -- require 'kickstart.plugins.cursor',
   require 'kickstart.plugins.goplements',
-  require 'kickstart.plugins.hugo',
   require 'kickstart.plugins.copilot',
   require 'kickstart.plugins.snacks',
 
