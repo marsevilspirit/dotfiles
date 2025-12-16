@@ -243,14 +243,6 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
--- Set filetype to `html` for EJS files
-vim.api.nvim_create_autocmd({ 'BufRead', 'BufNewFile' }, {
-  pattern = '*.ejs',
-  callback = function()
-    vim.bo.filetype = 'html'
-  end,
-})
-
 -- cancel new line comment
 vim.api.nvim_create_autocmd({ 'BufEnter' }, {
   pattern = '*',
