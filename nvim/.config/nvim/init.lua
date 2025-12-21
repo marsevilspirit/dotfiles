@@ -313,7 +313,6 @@ require('lazy').setup({
   --
   -- See `:help gitsigns` to understand what the configuration keys do
 
-
   -- NOTE: Plugins can also be configured to run Lua code when they are loaded.
   --
   -- This is often very useful to both group configuration, as well as handle
@@ -387,10 +386,6 @@ require('lazy').setup({
   -- you do for a plugin at the top level, you can do for a dependency.
   --
   -- Use the `dependencies` key to specify the dependencies of a particular plugin
-
-
-
-
 
   { -- Autoformat
     'stevearc/conform.nvim',
