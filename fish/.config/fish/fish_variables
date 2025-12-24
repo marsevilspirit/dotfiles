@@ -54,4 +54,4 @@ SETUVAR fish_pager_color_selected_background:\x2d\x2dbackground\x3d44475a
 SETUVAR fish_pager_color_selected_completion:f8f8f2
 SETUVAR fish_pager_color_selected_description:6272a4
 SETUVAR fish_pager_color_selected_prefix:8be9fd
-SETUVAR fish_user_paths:/Users/mars/\x2ecargo/bin\x1e/home/mars/go
+SETUVAR fish_user_paths:/Users/mars/\x2eantigravity/antigravity/bin\x1e/Users/mars/\x2ecargo/bin\x1e/home/mars/go
