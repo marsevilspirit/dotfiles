@@ -1,7 +1,6 @@
 config-file = theme
 
 font-size = 19
-font-family = "Sarasa Term SC"
 shell-integration-features = no-cursor
 cursor-style = block
 cursor-style-blink = false
