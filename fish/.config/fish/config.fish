@@ -4,15 +4,7 @@ if status is-interactive
     # theme: Dracula
     fish_config theme choose "Dracula Official"
 
-    export CHEAT_CONFIG_PATH="~/.config/cheat/conf.yml"
-
     export PATH="$PATH:$(go env GOPATH)/bin"
-
-	# linux config
-	# export PATH="$PATH:/home/mars/.cargo/bin"
-
-	# linux config
-	# export PATH="$PATH:/home/mars/.local/share/bob/nvim-bin"
 
     # 取消自动补全
     set -g fish_autosuggestion_enabled 0
