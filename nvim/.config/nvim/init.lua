@@ -108,8 +108,6 @@ vim.api.nvim_create_autocmd('PackChanged', {
       if vim.fn.executable 'make' == 1 then
         vim.system({ 'make', 'install_jsregexp' }, { cwd = ev.data.path })
       end
-    elseif name == 'markdown-preview.nvim' then
-      vim.system({ 'yarn', 'install' }, { cwd = ev.data.path .. '/app' })
     end
   end,
 })
