@@ -10,6 +10,11 @@ vim.g.maplocalleader = ' '
 vim.g.have_nerd_font = true
 vim.g.snacks_animate = false
 
+vim.g.loaded_python3_provider = 0
+vim.g.loaded_ruby_provider = 0
+vim.g.loaded_perl_provider = 0
+vim.g.loaded_node_provider = 0
+
 -- [[ Setting options ]]
 vim.o.number = true
 vim.o.mouse = 'a'
@@ -144,10 +149,6 @@ vim.pack.add {
   -- Git
   'https://github.com/lewis6991/gitsigns.nvim',
   'https://github.com/sindrets/diffview.nvim',
-
-
-  -- Language-specific
-  'https://github.com/maxandron/goplements.nvim',
 
   -- Editing
   'https://github.com/echasnovski/mini.nvim',
