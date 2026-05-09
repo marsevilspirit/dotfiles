@@ -17,4 +17,4 @@ SETUVAR fish_autosuggestion_enabled:0
 SETUVAR fish_autosuggestions_enabled:0
 SETUVAR fish_complete_path:/usr/share/fish/completions\x1e/opt/homebrew/Cellar/fish/4\x2e1\x2e2/share/fish/completions
 SETUVAR fish_greeting:\x1d
-SETUVAR fish_user_paths:/opt/homebrew/opt/openjdk/bin\x1e/Users/mars/\x2eantigravity/antigravity/bin\x1e/Users/mars/\x2ecargo/bin\x1e/home/mars/go
+SETUVAR fish_user_paths:/Users/mars/\x2elocal/share/bob/nvim\x2dbin\x1e/opt/homebrew/opt/openjdk/bin\x1e/Users/mars/\x2eantigravity/antigravity/bin\x1e/Users/mars/\x2ecargo/bin\x1e/home/mars/go
