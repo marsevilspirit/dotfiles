@@ -16,6 +16,7 @@ vim.g.loaded_perl_provider = 0
 vim.g.loaded_node_provider = 0
 
 -- [[ Setting options ]]
+vim.filetype.add({ extension = { gotmpl = 'gotmpl' } })
 vim.o.number = true
 vim.o.mouse = 'a'
 vim.o.showmode = false
@@ -112,6 +113,10 @@ vim.api.nvim_create_autocmd('PackChanged', {
     if name == 'LuaSnip' then
       if vim.fn.executable 'make' == 1 then
         vim.system({ 'make', 'install_jsregexp' }, { cwd = ev.data.path })
+      end
+    elseif name == 'blink.cmp' then
+      if vim.fn.executable 'cargo' == 1 then
+        vim.system({ 'cargo', 'build', '--release' }, { cwd = ev.data.path })
       end
     end
   end,
