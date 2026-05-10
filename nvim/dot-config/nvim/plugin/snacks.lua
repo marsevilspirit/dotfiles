@@ -27,18 +27,6 @@ map('n', '<leader>sd', function() Snacks.picker.diagnostics() end, { desc = '[S]
 map('n', '<leader>sr', function() Snacks.picker.resume() end, { desc = '[S]earch [R]esume' })
 map('n', '<leader>s.', function() Snacks.picker.recent() end, { desc = '[S]earch Recent Files ("." for repeat)' })
 map('n', '<leader><leader>', function() Snacks.picker.buffers() end, { desc = '[ ] Find existing buffers' })
-
--- Fuzzily search in current buffer
-map('n', '<leader>/', function()
-  Snacks.picker.lines()
-end, { desc = '[/] Fuzzily search in current buffer' })
-
--- Search in open files
-map('n', '<leader>s/', function()
-  Snacks.picker.grep { dirs = vim.tbl_map(vim.api.nvim_buf_get_name, vim.api.nvim_list_bufs()) }
-end, { desc = '[S]earch [/] in Open Files' })
-
--- Search Neovim config files
-map('n', '<leader>sn', function()
-  Snacks.picker.files { cwd = vim.fn.stdpath 'config' }
-end, { desc = '[S]earch [N]eovim files' })
+map('n', '<leader>/', function() Snacks.picker.lines() end, { desc = '[/] Fuzzily search in current buffer' })
+map('n', '<leader>s/', function() Snacks.picker.grep { dirs = vim.tbl_map(vim.api.nvim_buf_get_name, vim.api.nvim_list_bufs()) } end, { desc = '[S]earch [/] in Open Files' })
+map('n', '<leader>sn', function() Snacks.notifier.show_history() end, { desc = '[S]how [N]otification history' })
