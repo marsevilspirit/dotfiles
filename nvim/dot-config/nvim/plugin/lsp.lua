@@ -8,12 +8,7 @@ require('mason-tool-installer').setup {
   ensure_installed = {
     'stylua',
     'clangd',
-    'clang-format',
-    'protols',
-    'gopls',
-    'pyright',
     'rust-analyzer',
-    'codelldb',
     'lua-language-server',
   },
 }
