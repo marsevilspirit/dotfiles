@@ -161,7 +161,6 @@ vim.pack.add {
   'https://github.com/windwp/nvim-autopairs',
 
   -- Misc
-  'https://github.com/zbirenbaum/copilot.lua',
   'https://github.com/wakatime/vim-wakatime',
 }
 
