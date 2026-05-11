@@ -75,6 +75,16 @@ vim.keymap.set('n', '<C-right>', '<cmd>BufferLineCycleNext<CR>', { desc = 'Next 
 vim.keymap.set('n', '<S-L>', '<cmd>BufferLineCycleNext<CR>', { desc = 'Next buffer' })
 vim.keymap.set('n', '<S-H>', '<cmd>BufferLineCyclePrev<CR>', { desc = 'Prev buffer' })
 
+-- Diff review
+vim.keymap.set('n', '<leader>rw', function()
+  local ok, lib = pcall(require, 'diffview.lib')
+  if ok and lib.get_current_view() then
+    vim.cmd 'DiffviewClose'
+  else
+    vim.cmd 'DiffviewOpen'
+  end
+end, { desc = 'Toggle diff [r]evie[w]' })
+
 -- [[ Basic Autocommands ]]
 
 -- Highlight when yanking (copying) text
