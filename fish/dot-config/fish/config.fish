@@ -1,3 +1,8 @@
+set -l secrets_fish "$HOME/.config/fish/secrets.fish"
+if test -f $secrets_fish
+    source $secrets_fish
+end
+
 if status is-interactive
     # Commands to run in interactive sessions can go here
 
