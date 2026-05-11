@@ -6,6 +6,10 @@ if status is-interactive
 
     export PATH="$PATH:$(go env GOPATH)/bin"
 
+    if test -f ~/.cargo/env.fish
+        source ~/.cargo/env.fish
+    end
+
     # 取消自动补全
     set -g fish_autosuggestion_enabled 0
 
@@ -25,7 +29,6 @@ if status is-interactive
     # fzf
     fzf --fish | source
 
-    # zoxide
     zoxide init fish | source
 end
 
@@ -33,13 +36,3 @@ end
 test -s ~/.config/envman/load.fish; and source ~/.config/envman/load.fish
 
 export PATH="$HOME/.local/bin:$PATH"
-
-# pnpm
-set -gx PNPM_HOME "/Users/mars/Library/pnpm"
-if not string match -q -- $PNPM_HOME $PATH
-  set -gx PATH "$PNPM_HOME" $PATH
-end
-# pnpm end
-
-# Added by Antigravity
-fish_add_path /Users/mars/.antigravity/antigravity/bin
