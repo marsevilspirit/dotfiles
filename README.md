@@ -2,7 +2,9 @@
 
 This repository uses [GNU Stow](https://www.gnu.org/software/stow/) for dotfiles management.
 
-To prevent the repository from being cluttered with hidden files (which are invisible by default when using `ls`), this repository leverages Stow's `--dotfiles` feature. All hidden configurations that normally start with `.` (e.g., `.config`, `.zshrc`) have been renamed to use the `dot-` prefix instead (e.g., `dot-config`, `dot-zshrc`).
+To prevent the repository from being cluttered with hidden files (which are invisible by default when using `ls`), this repository leverages Stow's `--dotfiles` feature. All hidden configurations that normally start with `.` (e.g., `.config`, `.tmux.conf`, `.zshrc`) have been renamed to use the `dot-` prefix instead (e.g., `dot-config`, `dot-tmux.conf`, `dot-zshrc`).
+
+Day-to-day shell setup uses **fish** (included in `just install`). A legacy `zsh/dot-zshrc` remains in the repository for reference; it is **not** stowed by default—run `stow --dotfiles zsh` manually if you want it linked to `~/.zshrc`.
 
 ## Usage
 
