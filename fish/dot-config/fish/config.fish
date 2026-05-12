@@ -37,7 +37,4 @@ if status is-interactive
     zoxide init fish | source
 end
 
-# Generated for envman. Do not edit.
-test -s ~/.config/envman/load.fish; and source ~/.config/envman/load.fish
-
 export PATH="$HOME/.local/bin:$PATH"
