@@ -8,23 +8,29 @@ To prevent the repository from being cluttered with hidden files (which are invi
 
 Because of the `dot-` prefix structure, you **must use the `--dotfiles` flag** when running Stow commands. This ensures Stow automatically converts the `dot-` prefix back to `.` when creating the symlinks in your home directory.
 
-### Stow (Apply Configuration)
+Run Stow from the repository root (the directory that contains the package folders such as `fish` and `nvim`).
 
-To symlink a specific package (e.g., `nvim`) to your home directory:
+### Install (recommended)
+
+Use [Just](https://github.com/casey/just) with the `justfile` in this repository so only intended packages are linked. This avoids `stow --dotfiles *`, which would also pick up non-configuration trees such as `RSS/`. From the repository root:
+
+```bash
+just install      # symlink fish, nvim, tmux, aerospace
+just dry-run      # stow -n -v (no changes)
+just uninstall    # stow -D (remove symlinks for those packages)
+```
+
+The package list is `fish nvim tmux aerospace`. Edit `packages` at the top of the `justfile` if you need a different set.
+
+### Stow (manual)
+
+To symlink a single package (e.g., `nvim`) to your home directory:
 
 ```bash
 stow --dotfiles nvim
 ```
 
-To apply all configurations at once:
-
-```bash
-stow --dotfiles *
-```
-
-### Unstow (Remove Configuration)
-
-To safely remove the symlinks from your home directory:
+To remove symlinks for one package:
 
 ```bash
 stow -D --dotfiles nvim
