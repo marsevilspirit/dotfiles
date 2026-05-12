@@ -157,9 +157,8 @@ vim.pack.add {
   'https://github.com/WhoIsSethDaniel/mason-tool-installer.nvim',
   'https://github.com/j-hui/fidget.nvim',
 
-  -- Formatting / Linting
+  -- Formatting
   'https://github.com/stevearc/conform.nvim',
-  'https://github.com/mfussenegger/nvim-lint',
 
   -- Git
   'https://github.com/lewis6991/gitsigns.nvim',
