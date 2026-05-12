@@ -6,7 +6,6 @@ end
 if status is-interactive
     # Commands to run in interactive sessions can go here
 
-    # theme: Dracula
     fish_config theme choose "Dracula Official"
 
     export PATH="$PATH:$(go env GOPATH)/bin"
@@ -15,15 +14,11 @@ if status is-interactive
         source ~/.cargo/env.fish
     end
 
-    # 取消自动补全
-    set -g fish_autosuggestion_enabled 0
-
-    # neofetch快捷键
     abbr s fastfetch
-    # kitty快捷键
-    abbr icat "kitty +kitten icat"
-    # zoxide
-    abbr cd z
+
+    if type -q z
+        abbr cd z
+    end
 
     if type -q eza
         abbr ls eza
@@ -31,9 +26,7 @@ if status is-interactive
         abbr lla "ll -a"
     end
 
-    # fzf
     fzf --fish | source
-
     zoxide init fish | source
 end
 

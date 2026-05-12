@@ -1,0 +1,112 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    concurrency:
+      group: ci-${{ github.workflow }}-${{ github.ref }}-${{ matrix.os }}
+      cancel-in-progress: true
+    timeout-minutes: 20
+    env:
+      STOW_HOME: ${{ runner.temp }}/dotfiles-ci-home
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify stow package paths exist
+        run: |
+          set -euo pipefail
+          test -d fish/dot-config/fish
+          test -d nvim/dot-config/nvim
+          test -f tmux/dot-tmux.conf
+          test -f aerospace/dot-config/aerospace/aerospace.toml
+
+      - name: Install Stow, Git, Neovim (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y stow curl git
+          curl -fsSL https://github.com/neovim/neovim/releases/download/stable/nvim-linux-x86_64.tar.gz \
+            | tar xz -C "${RUNNER_TEMP}"
+          echo "${RUNNER_TEMP}/nvim-linux-x86_64/bin" >> "$GITHUB_PATH"
+
+      - name: Install Stow, Git, Neovim (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          set -euo pipefail
+          brew install stow git neovim
+
+      - name: Install Neovim (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $zip = Join-Path $env:RUNNER_TEMP 'nvim-win64.zip'
+          $extract = Join-Path $env:RUNNER_TEMP 'nvim-win-extract'
+          Invoke-WebRequest `
+            -Uri 'https://github.com/neovim/neovim/releases/download/stable/nvim-win64.zip' `
+            -OutFile $zip
+          New-Item -ItemType Directory -Force -Path $extract | Out-Null
+          Expand-Archive $zip -DestinationPath $extract -Force
+          $nvimExe = Get-ChildItem -Path $extract -Recurse -Filter nvim.exe -ErrorAction SilentlyContinue |
+            Select-Object -First 1
+          if (-not $nvimExe) { throw 'nvim.exe not found after extracting Neovim archive' }
+          Add-Content $env:GITHUB_PATH $nvimExe.DirectoryName
+
+      - name: Stow dry-run (Unix)
+        if: runner.os != 'Windows'
+        run: |
+          set -euo pipefail
+          mkdir -p "$STOW_HOME"
+          cd "${GITHUB_WORKSPACE}"
+          stow --dotfiles -n -v -t "$STOW_HOME" fish nvim tmux aerospace
+
+      - name: Stow apply + Neovim checkhealth (Unix)
+        if: runner.os != 'Windows'
+        env:
+          HOME: ${{ env.STOW_HOME }}
+        run: |
+          set -euo pipefail
+          mkdir -p "$HOME"
+          cd "${GITHUB_WORKSPACE}"
+          stow --dotfiles -t "$HOME" fish nvim tmux aerospace
+          nvim --headless "+checkhealth" "+qa"
+
+      - name: Layout (stow equivalent) + Neovim checkhealth (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        env:
+          HOME: ${{ runner.temp }}\dotfiles-ci-home
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $ws = $env:GITHUB_WORKSPACE
+          New-Item -ItemType Directory -Force -Path $env:HOME | Out-Null
+          $cfg = Join-Path $env:HOME '.config'
+          New-Item -ItemType Directory -Force -Path $cfg | Out-Null
+
+          New-Item -ItemType Junction -Path (Join-Path $cfg 'fish') `
+            -Target (Join-Path $ws 'fish\dot-config\fish') | Out-Null
+          New-Item -ItemType Junction -Path (Join-Path $cfg 'nvim') `
+            -Target (Join-Path $ws 'nvim\dot-config\nvim') | Out-Null
+          New-Item -ItemType Junction -Path (Join-Path $cfg 'aerospace') `
+            -Target (Join-Path $ws 'aerospace\dot-config\aerospace') | Out-Null
+
+          Copy-Item (Join-Path $ws 'tmux\dot-tmux.conf') (Join-Path $env:HOME '.tmux.conf') -Force
+
+          nvim --headless "+checkhealth" "+qa"
