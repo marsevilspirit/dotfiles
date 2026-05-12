@@ -1,5 +1,9 @@
 packages := 'fish nvim tmux aerospace'
 
+[private]
+default:
+	@just --list
+
 install:
 	stow --dotfiles {{packages}}
 
