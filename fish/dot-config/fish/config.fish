@@ -16,7 +16,7 @@ if status is-interactive
 
     abbr s fastfetch
 
-    if type -q z
+    if type -q zoxide
         abbr cd z
     end
 
