@@ -160,6 +160,9 @@ vim.pack.add {
   -- Formatting
   'https://github.com/stevearc/conform.nvim',
 
+  -- Markdown
+  'https://github.com/MeanderingProgrammer/render-markdown.nvim',
+
   -- Git
   'https://github.com/lewis6991/gitsigns.nvim',
   'https://github.com/sindrets/diffview.nvim',
