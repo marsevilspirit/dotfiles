@@ -19,8 +19,6 @@ jobs:
       group: ci-${{ github.workflow }}-${{ github.ref }}-${{ matrix.os }}
       cancel-in-progress: true
     timeout-minutes: 20
-    env:
-      STOW_HOME: ${{ runner.temp }}/dotfiles-ci-home
     defaults:
       run:
         shell: bash
@@ -73,16 +71,16 @@ jobs:
         if: runner.os != 'Windows'
         run: |
           set -euo pipefail
+          STOW_HOME="${RUNNER_TEMP}/dotfiles-ci-home"
           mkdir -p "$STOW_HOME"
           cd "${GITHUB_WORKSPACE}"
           stow --dotfiles -n -v -t "$STOW_HOME" fish nvim tmux aerospace
 
       - name: Stow apply + Neovim checkhealth (Unix)
         if: runner.os != 'Windows'
-        env:
-          HOME: ${{ env.STOW_HOME }}
         run: |
           set -euo pipefail
+          export HOME="${RUNNER_TEMP}/dotfiles-ci-home"
           mkdir -p "$HOME"
           cd "${GITHUB_WORKSPACE}"
           stow --dotfiles -t "$HOME" fish nvim tmux aerospace
@@ -91,13 +89,14 @@ jobs:
       - name: Layout (stow equivalent) + Neovim checkhealth (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
-        env:
-          HOME: ${{ runner.temp }}\dotfiles-ci-home
         run: |
           $ErrorActionPreference = 'Stop'
           $ws = $env:GITHUB_WORKSPACE
-          New-Item -ItemType Directory -Force -Path $env:HOME | Out-Null
-          $cfg = Join-Path $env:HOME '.config'
+          $tempHome = Join-Path $env:RUNNER_TEMP 'dotfiles-ci-home'
+          $env:HOME = $tempHome
+          $env:USERPROFILE = $tempHome
+          New-Item -ItemType Directory -Force -Path $tempHome | Out-Null
+          $cfg = Join-Path $tempHome '.config'
           New-Item -ItemType Directory -Force -Path $cfg | Out-Null
 
           New-Item -ItemType Junction -Path (Join-Path $cfg 'fish') `
@@ -107,6 +106,6 @@ jobs:
           New-Item -ItemType Junction -Path (Join-Path $cfg 'aerospace') `
             -Target (Join-Path $ws 'aerospace\dot-config\aerospace') | Out-Null
 
-          Copy-Item (Join-Path $ws 'tmux\dot-tmux.conf') (Join-Path $env:HOME '.tmux.conf') -Force
+          Copy-Item (Join-Path $ws 'tmux\dot-tmux.conf') (Join-Path $tempHome '.tmux.conf') -Force
 
           nvim --headless "+checkhealth" "+qa"
