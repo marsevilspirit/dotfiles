@@ -33,3 +33,4 @@ if status is-interactive
 end
 
 export PATH="$HOME/.local/bin:$PATH"
+fish_add_path --path "$HOME/.cargo/bin"

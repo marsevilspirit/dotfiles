@@ -1,6 +1,6 @@
 # Print an optspec for argparse to handle cmd's options that are independent of any subcommand.
 function __fish_bob_global_optspecs
-	string join \n h/help V/version
+	string join \n v/verbose h/help V/version
 end
 
 function __fish_bob_needs_command
@@ -24,11 +24,12 @@ function __fish_bob_using_subcommand
 	contains -- $cmd[1] $argv
 end
 
+complete -c bob -n "__fish_bob_needs_command" -s v -l verbose -d 'Increase verbosity (-v for DEBUG, -vv for TRACE, -vvv for global TRACE)'
 complete -c bob -n "__fish_bob_needs_command" -s h -l help -d 'Print help'
 complete -c bob -n "__fish_bob_needs_command" -s V -l version -d 'Print version'
 complete -c bob -n "__fish_bob_needs_command" -f -a "use" -d 'Switch to the specified version, by default will auto-invoke install command if the version is not installed already'
 complete -c bob -n "__fish_bob_needs_command" -f -a "install" -d 'Install the specified version, can also be used to update out-of-date nightly version'
-complete -c bob -n "__fish_bob_needs_command" -f -a "sync" -d 'If Config::version_sync_file_location is set, the version in that file will be parsed and installed'
+complete -c bob -n "__fish_bob_needs_command" -f -a "sync" -d 'If `Config::version_sync_file_location` is set, the version in that file will be parsed and installed'
 complete -c bob -n "__fish_bob_needs_command" -f -a "uninstall" -d 'Uninstall the specified version'
 complete -c bob -n "__fish_bob_needs_command" -f -a "rm" -d 'Uninstall the specified version'
 complete -c bob -n "__fish_bob_needs_command" -f -a "rollback" -d 'Rollback to an existing nightly rollback'
@@ -39,30 +40,47 @@ complete -c bob -n "__fish_bob_needs_command" -f -a "list-remote"
 complete -c bob -n "__fish_bob_needs_command" -f -a "ls-remote"
 complete -c bob -n "__fish_bob_needs_command" -f -a "complete" -d 'Generate shell completion'
 complete -c bob -n "__fish_bob_needs_command" -f -a "update" -d 'Update existing version |nightly|stable|--all|'
+complete -c bob -n "__fish_bob_needs_command" -f -a "run"
 complete -c bob -n "__fish_bob_needs_command" -f -a "help" -d 'Print this message or the help of the given subcommand(s)'
 complete -c bob -n "__fish_bob_using_subcommand use" -s n -l no-install -d 'Whether not to auto-invoke install command'
-complete -c bob -n "__fish_bob_using_subcommand use" -s h -l help -d 'Print help'
-complete -c bob -n "__fish_bob_using_subcommand install" -s h -l help -d 'Print help'
+complete -c bob -n "__fish_bob_using_subcommand use" -s v -l verbose -d 'Increase verbosity (-v for DEBUG, -vv for TRACE, -vvv for global TRACE)'
+complete -c bob -n "__fish_bob_using_subcommand use" -s h -l help -d 'Print help (see more with \'--help\')'
+complete -c bob -n "__fish_bob_using_subcommand install" -s v -l verbose -d 'Increase verbosity (-v for DEBUG, -vv for TRACE, -vvv for global TRACE)'
+complete -c bob -n "__fish_bob_using_subcommand install" -s h -l help -d 'Print help (see more with \'--help\')'
+complete -c bob -n "__fish_bob_using_subcommand sync" -s v -l verbose -d 'Increase verbosity (-v for DEBUG, -vv for TRACE, -vvv for global TRACE)'
 complete -c bob -n "__fish_bob_using_subcommand sync" -s h -l help -d 'Print help'
-complete -c bob -n "__fish_bob_using_subcommand uninstall" -s h -l help -d 'Print help'
-complete -c bob -n "__fish_bob_using_subcommand rm" -s h -l help -d 'Print help'
+complete -c bob -n "__fish_bob_using_subcommand uninstall" -s v -l verbose -d 'Increase verbosity (-v for DEBUG, -vv for TRACE, -vvv for global TRACE)'
+complete -c bob -n "__fish_bob_using_subcommand uninstall" -s h -l help -d 'Print help (see more with \'--help\')'
+complete -c bob -n "__fish_bob_using_subcommand rm" -s v -l verbose -d 'Increase verbosity (-v for DEBUG, -vv for TRACE, -vvv for global TRACE)'
+complete -c bob -n "__fish_bob_using_subcommand rm" -s h -l help -d 'Print help (see more with \'--help\')'
+complete -c bob -n "__fish_bob_using_subcommand rollback" -s v -l verbose -d 'Increase verbosity (-v for DEBUG, -vv for TRACE, -vvv for global TRACE)'
 complete -c bob -n "__fish_bob_using_subcommand rollback" -s h -l help -d 'Print help'
+complete -c bob -n "__fish_bob_using_subcommand erase" -s v -l verbose -d 'Increase verbosity (-v for DEBUG, -vv for TRACE, -vvv for global TRACE)'
 complete -c bob -n "__fish_bob_using_subcommand erase" -s h -l help -d 'Print help'
+complete -c bob -n "__fish_bob_using_subcommand list" -s v -l verbose -d 'Increase verbosity (-v for DEBUG, -vv for TRACE, -vvv for global TRACE)'
 complete -c bob -n "__fish_bob_using_subcommand list" -s h -l help -d 'Print help'
+complete -c bob -n "__fish_bob_using_subcommand ls" -s v -l verbose -d 'Increase verbosity (-v for DEBUG, -vv for TRACE, -vvv for global TRACE)'
 complete -c bob -n "__fish_bob_using_subcommand ls" -s h -l help -d 'Print help'
+complete -c bob -n "__fish_bob_using_subcommand list-remote" -s v -l verbose -d 'Increase verbosity (-v for DEBUG, -vv for TRACE, -vvv for global TRACE)'
 complete -c bob -n "__fish_bob_using_subcommand list-remote" -s h -l help -d 'Print help'
+complete -c bob -n "__fish_bob_using_subcommand ls-remote" -s v -l verbose -d 'Increase verbosity (-v for DEBUG, -vv for TRACE, -vvv for global TRACE)'
 complete -c bob -n "__fish_bob_using_subcommand ls-remote" -s h -l help -d 'Print help'
+complete -c bob -n "__fish_bob_using_subcommand complete" -s v -l verbose -d 'Increase verbosity (-v for DEBUG, -vv for TRACE, -vvv for global TRACE)'
 complete -c bob -n "__fish_bob_using_subcommand complete" -s h -l help -d 'Print help'
 complete -c bob -n "__fish_bob_using_subcommand update" -s a -l all -d 'Apply the update to all versions'
+complete -c bob -n "__fish_bob_using_subcommand update" -s v -l verbose -d 'Increase verbosity (-v for DEBUG, -vv for TRACE, -vvv for global TRACE)'
 complete -c bob -n "__fish_bob_using_subcommand update" -s h -l help -d 'Print help'
-complete -c bob -n "__fish_bob_using_subcommand help; and not __fish_seen_subcommand_from use install sync uninstall rollback erase list list-remote complete update help" -f -a "use" -d 'Switch to the specified version, by default will auto-invoke install command if the version is not installed already'
-complete -c bob -n "__fish_bob_using_subcommand help; and not __fish_seen_subcommand_from use install sync uninstall rollback erase list list-remote complete update help" -f -a "install" -d 'Install the specified version, can also be used to update out-of-date nightly version'
-complete -c bob -n "__fish_bob_using_subcommand help; and not __fish_seen_subcommand_from use install sync uninstall rollback erase list list-remote complete update help" -f -a "sync" -d 'If Config::version_sync_file_location is set, the version in that file will be parsed and installed'
-complete -c bob -n "__fish_bob_using_subcommand help; and not __fish_seen_subcommand_from use install sync uninstall rollback erase list list-remote complete update help" -f -a "uninstall" -d 'Uninstall the specified version'
-complete -c bob -n "__fish_bob_using_subcommand help; and not __fish_seen_subcommand_from use install sync uninstall rollback erase list list-remote complete update help" -f -a "rollback" -d 'Rollback to an existing nightly rollback'
-complete -c bob -n "__fish_bob_using_subcommand help; and not __fish_seen_subcommand_from use install sync uninstall rollback erase list list-remote complete update help" -f -a "erase" -d 'Erase any change bob ever made, including neovim installation, neovim version downloads and registry changes'
-complete -c bob -n "__fish_bob_using_subcommand help; and not __fish_seen_subcommand_from use install sync uninstall rollback erase list list-remote complete update help" -f -a "list" -d 'List all installed and used versions'
-complete -c bob -n "__fish_bob_using_subcommand help; and not __fish_seen_subcommand_from use install sync uninstall rollback erase list list-remote complete update help" -f -a "list-remote"
-complete -c bob -n "__fish_bob_using_subcommand help; and not __fish_seen_subcommand_from use install sync uninstall rollback erase list list-remote complete update help" -f -a "complete" -d 'Generate shell completion'
-complete -c bob -n "__fish_bob_using_subcommand help; and not __fish_seen_subcommand_from use install sync uninstall rollback erase list list-remote complete update help" -f -a "update" -d 'Update existing version |nightly|stable|--all|'
-complete -c bob -n "__fish_bob_using_subcommand help; and not __fish_seen_subcommand_from use install sync uninstall rollback erase list list-remote complete update help" -f -a "help" -d 'Print this message or the help of the given subcommand(s)'
+complete -c bob -n "__fish_bob_using_subcommand run" -s v -l verbose -d 'Increase verbosity (-v for DEBUG, -vv for TRACE, -vvv for global TRACE)'
+complete -c bob -n "__fish_bob_using_subcommand run" -s h -l help -d 'Print help'
+complete -c bob -n "__fish_bob_using_subcommand help; and not __fish_seen_subcommand_from use install sync uninstall rollback erase list list-remote complete update run help" -f -a "use" -d 'Switch to the specified version, by default will auto-invoke install command if the version is not installed already'
+complete -c bob -n "__fish_bob_using_subcommand help; and not __fish_seen_subcommand_from use install sync uninstall rollback erase list list-remote complete update run help" -f -a "install" -d 'Install the specified version, can also be used to update out-of-date nightly version'
+complete -c bob -n "__fish_bob_using_subcommand help; and not __fish_seen_subcommand_from use install sync uninstall rollback erase list list-remote complete update run help" -f -a "sync" -d 'If `Config::version_sync_file_location` is set, the version in that file will be parsed and installed'
+complete -c bob -n "__fish_bob_using_subcommand help; and not __fish_seen_subcommand_from use install sync uninstall rollback erase list list-remote complete update run help" -f -a "uninstall" -d 'Uninstall the specified version'
+complete -c bob -n "__fish_bob_using_subcommand help; and not __fish_seen_subcommand_from use install sync uninstall rollback erase list list-remote complete update run help" -f -a "rollback" -d 'Rollback to an existing nightly rollback'
+complete -c bob -n "__fish_bob_using_subcommand help; and not __fish_seen_subcommand_from use install sync uninstall rollback erase list list-remote complete update run help" -f -a "erase" -d 'Erase any change bob ever made, including neovim installation, neovim version downloads and registry changes'
+complete -c bob -n "__fish_bob_using_subcommand help; and not __fish_seen_subcommand_from use install sync uninstall rollback erase list list-remote complete update run help" -f -a "list" -d 'List all installed and used versions'
+complete -c bob -n "__fish_bob_using_subcommand help; and not __fish_seen_subcommand_from use install sync uninstall rollback erase list list-remote complete update run help" -f -a "list-remote"
+complete -c bob -n "__fish_bob_using_subcommand help; and not __fish_seen_subcommand_from use install sync uninstall rollback erase list list-remote complete update run help" -f -a "complete" -d 'Generate shell completion'
+complete -c bob -n "__fish_bob_using_subcommand help; and not __fish_seen_subcommand_from use install sync uninstall rollback erase list list-remote complete update run help" -f -a "update" -d 'Update existing version |nightly|stable|--all|'
+complete -c bob -n "__fish_bob_using_subcommand help; and not __fish_seen_subcommand_from use install sync uninstall rollback erase list list-remote complete update run help" -f -a "run"
+complete -c bob -n "__fish_bob_using_subcommand help; and not __fish_seen_subcommand_from use install sync uninstall rollback erase list list-remote complete update run help" -f -a "help" -d 'Print this message or the help of the given subcommand(s)'
