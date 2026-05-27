@@ -33,7 +33,7 @@ function __register_wakatime_fish_before_exec -e fish_postexec
     return 1
   end
 
-  if git rev-parse --is-inside-work-tree &> /dev/null
+  if test "$(git rev-parse --is-inside-work-tree 2>/dev/null)" = "true"
     set project (basename (git rev-parse --show-toplevel))
   else
     set project "Terminal"
