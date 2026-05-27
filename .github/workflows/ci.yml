@@ -39,7 +39,17 @@ jobs:
         run: |
           set -euo pipefail
           sudo apt-get update
-          sudo apt-get install -y stow curl git
+          sudo apt-get install -y curl git make perl
+          
+          # Download and install GNU Stow 2.4.0+ to fix long-standing --dotfiles directory bug in older APT package (stow 2.3.1)
+          curl -fsSL https://ftp.gnu.org/gnu/stow/stow-2.4.0.tar.gz | tar xz -C "${RUNNER_TEMP}"
+          cd "${RUNNER_TEMP}/stow-2.4.0"
+          ./configure --prefix=/usr
+          make
+          sudo make install
+          cd -
+
+          # Install Neovim
           curl -fsSL https://github.com/neovim/neovim/releases/download/stable/nvim-linux-x86_64.tar.gz \
             | tar xz -C "${RUNNER_TEMP}"
           echo "${RUNNER_TEMP}/nvim-linux-x86_64/bin" >> "$GITHUB_PATH"
