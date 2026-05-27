@@ -10,6 +10,8 @@ if status is-interactive
 
     export PATH="$PATH:$(go env GOPATH)/bin"
 
+    set -g fish_autosuggestion_enabled 1
+
     if test -f ~/.cargo/env.fish
         source ~/.cargo/env.fish
     end
