@@ -28,9 +28,8 @@ sh -c "$(curl -fsLS get.chezmoi.io)"
 From the repository root:
 
 ```bash
-just install    # chezmoi apply --source .
-just dry-run    # chezmoi diff --source .
-just diff       # same as dry-run
+just apply      # chezmoi apply --source .
+just diff       # chezmoi diff --source .
 ```
 
 Or run chezmoi directly:

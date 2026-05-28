@@ -2,11 +2,10 @@
 default:
 	@just --list
 
-install:
+# Apply managed dotfiles to HOME (~/.config, ~/.tmux.conf, etc.)
+apply:
 	chezmoi apply --source .
 
-dry-run:
-	chezmoi diff --source .; status=$?; test $status -le 1
-
+# Preview changes before applying (exits 0 even when diff is non-empty)
 diff:
 	chezmoi diff --source .; status=$?; test $status -le 1
