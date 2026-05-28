@@ -26,45 +26,62 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Verify stow package paths exist
+      - name: Verify chezmoi source paths exist
         run: |
           set -euo pipefail
-          test -d fish/dot-config/fish
-          test -d nvim/dot-config/nvim
-          test -f tmux/dot-tmux.conf
-          test -f aerospace/dot-config/aerospace/aerospace.toml
+          test -d dot_config/fish
+          test -d dot_config/nvim
+          test -d dot_config/aerospace
+          test -d dot_config/ghostty
+          test -f dot_ideavimrc
+          test -f dot_tmux.conf
+          test -f dot_vimrc
+          test -f dot_zshrc
 
-      - name: Install Stow, Git, Neovim (Linux)
+      - name: Install Chezmoi and Neovim (Linux)
         if: runner.os == 'Linux'
         run: |
           set -euo pipefail
           sudo apt-get update
-          sudo apt-get install -y curl git make perl
-          
-          # Download and install GNU Stow 2.4.0+ to fix long-standing --dotfiles directory bug in older APT package (stow 2.3.1)
-          curl -fsSL https://ftp.gnu.org/gnu/stow/stow-2.4.0.tar.gz | tar xz -C "${RUNNER_TEMP}"
-          cd "${RUNNER_TEMP}/stow-2.4.0"
-          ./configure --prefix=/usr
-          make
-          sudo make install
-          cd -
+          sudo apt-get install -y curl git
 
-          # Install Neovim
+          sh -c "$(curl -fsLS get.chezmoi.io)" -- -b "${RUNNER_TEMP}/bin"
+          echo "${RUNNER_TEMP}/bin" >> "$GITHUB_PATH"
+
           curl -fsSL https://github.com/neovim/neovim/releases/download/stable/nvim-linux-x86_64.tar.gz \
             | tar xz -C "${RUNNER_TEMP}"
           echo "${RUNNER_TEMP}/nvim-linux-x86_64/bin" >> "$GITHUB_PATH"
 
-      - name: Install Stow, Git, Neovim (macOS)
+      - name: Install Chezmoi and Neovim (macOS)
         if: runner.os == 'macOS'
         run: |
           set -euo pipefail
-          brew install stow git neovim
+          brew install chezmoi git neovim
 
-      - name: Install Neovim (Windows)
+      - name: Install Chezmoi and Neovim (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
+          $bin = Join-Path $env:RUNNER_TEMP 'bin'
+          New-Item -ItemType Directory -Force -Path $bin | Out-Null
+
+          $release = Invoke-RestMethod 'https://api.github.com/repos/twpayne/chezmoi/releases/latest'
+          $asset = $release.assets |
+            Where-Object { $_.name -match 'windows_amd64\.zip$' } |
+            Select-Object -First 1
+          if (-not $asset) { throw 'chezmoi windows_amd64 release asset not found' }
+          $chezmoiZip = Join-Path $env:RUNNER_TEMP 'chezmoi-windows-amd64.zip'
+          $chezmoiExtract = Join-Path $env:RUNNER_TEMP 'chezmoi-win-extract'
+          Invoke-WebRequest -Uri $asset.browser_download_url -OutFile $chezmoiZip
+          New-Item -ItemType Directory -Force -Path $chezmoiExtract | Out-Null
+          Expand-Archive $chezmoiZip -DestinationPath $chezmoiExtract -Force
+          $chezmoiExe = Get-ChildItem -Path $chezmoiExtract -Recurse -Filter chezmoi.exe |
+            Select-Object -First 1
+          if (-not $chezmoiExe) { throw 'chezmoi.exe not found after extracting archive' }
+          Copy-Item $chezmoiExe.FullName (Join-Path $bin 'chezmoi.exe') -Force
+          Add-Content $env:GITHUB_PATH $bin
+
           $zip = Join-Path $env:RUNNER_TEMP 'nvim-win64.zip'
           $extract = Join-Path $env:RUNNER_TEMP 'nvim-win-extract'
           Invoke-WebRequest `
@@ -77,26 +94,34 @@ jobs:
           if (-not $nvimExe) { throw 'nvim.exe not found after extracting Neovim archive' }
           Add-Content $env:GITHUB_PATH $nvimExe.DirectoryName
 
-      - name: Stow dry-run (Unix)
+      - name: Chezmoi diff (Unix)
         if: runner.os != 'Windows'
         run: |
           set -euo pipefail
-          STOW_HOME="${RUNNER_TEMP}/dotfiles-ci-home"
-          mkdir -p "$STOW_HOME"
-          cd "${GITHUB_WORKSPACE}"
-          stow --dotfiles -n -v -t "$STOW_HOME" fish nvim tmux aerospace
+          HOME="${RUNNER_TEMP}/dotfiles-ci-home"
+          mkdir -p "$HOME"
+          chezmoi --source="${GITHUB_WORKSPACE}" --destination="$HOME" diff
 
-      - name: Stow apply + Neovim checkhealth (Unix)
+      - name: Chezmoi apply + Neovim checkhealth (Unix)
         if: runner.os != 'Windows'
         run: |
           set -euo pipefail
           export HOME="${RUNNER_TEMP}/dotfiles-ci-home"
           mkdir -p "$HOME"
-          cd "${GITHUB_WORKSPACE}"
-          stow --dotfiles -t "$HOME" fish nvim tmux aerospace
+          chezmoi --source="${GITHUB_WORKSPACE}" --destination="$HOME" apply --verbose
+          test -f "$HOME/.config/nvim/init.lua"
+          test -f "$HOME/.config/ghostty/config"
+          test -f "$HOME/.ideavimrc"
+          test -f "$HOME/.vimrc"
+          test -f "$HOME/.zshrc"
+          if [[ "$RUNNER_OS" == "macOS" ]]; then
+            test -f "$HOME/.config/aerospace/aerospace.toml"
+          else
+            test ! -e "$HOME/.config/aerospace"
+          fi
           nvim --headless "+checkhealth" "+qa"
 
-      - name: Layout (stow equivalent) + Neovim checkhealth (Windows)
+      - name: Chezmoi apply + Neovim checkhealth (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
@@ -105,17 +130,26 @@ jobs:
           $tempHome = Join-Path $env:RUNNER_TEMP 'dotfiles-ci-home'
           $env:HOME = $tempHome
           $env:USERPROFILE = $tempHome
+          $env:XDG_CONFIG_HOME = Join-Path $tempHome '.config'
           New-Item -ItemType Directory -Force -Path $tempHome | Out-Null
-          $cfg = Join-Path $tempHome '.config'
-          New-Item -ItemType Directory -Force -Path $cfg | Out-Null
 
-          New-Item -ItemType Junction -Path (Join-Path $cfg 'fish') `
-            -Target (Join-Path $ws 'fish\dot-config\fish') | Out-Null
-          New-Item -ItemType Junction -Path (Join-Path $cfg 'nvim') `
-            -Target (Join-Path $ws 'nvim\dot-config\nvim') | Out-Null
-          New-Item -ItemType Junction -Path (Join-Path $cfg 'aerospace') `
-            -Target (Join-Path $ws 'aerospace\dot-config\aerospace') | Out-Null
-
-          Copy-Item (Join-Path $ws 'tmux\dot-tmux.conf') (Join-Path $tempHome '.tmux.conf') -Force
-
+          chezmoi --source="$ws" --destination="$tempHome" apply --verbose
+          if (-not (Test-Path (Join-Path $env:XDG_CONFIG_HOME 'nvim\init.lua'))) {
+            throw 'Neovim config was not applied by chezmoi'
+          }
+          if (-not (Test-Path (Join-Path $env:XDG_CONFIG_HOME 'ghostty\config'))) {
+            throw 'Ghostty config was not applied by chezmoi'
+          }
+          if (-not (Test-Path (Join-Path $tempHome '.ideavimrc'))) {
+            throw 'IdeaVim config was not applied by chezmoi'
+          }
+          if (-not (Test-Path (Join-Path $tempHome '.vimrc'))) {
+            throw 'Vim config was not applied by chezmoi'
+          }
+          if (-not (Test-Path (Join-Path $tempHome '.zshrc'))) {
+            throw 'Zsh config was not applied by chezmoi'
+          }
+          if (Test-Path (Join-Path $env:XDG_CONFIG_HOME 'aerospace')) {
+            throw 'AeroSpace config should be ignored on Windows'
+          }
           nvim --headless "+checkhealth" "+qa"

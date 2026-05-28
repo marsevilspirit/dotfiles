@@ -1,39 +1,49 @@
 # dotfiles
 
-This repository uses [GNU Stow](https://www.gnu.org/software/stow/) for dotfiles management.
+This repository uses [chezmoi](https://www.chezmoi.io/) for dotfiles management.
 
-To prevent the repository from being cluttered with hidden files (which are invisible by default when using `ls`), this repository leverages Stow's `--dotfiles` feature. All hidden configurations that normally start with `.` (e.g., `.config`, `.tmux.conf`, `.zshrc`) have been renamed to use the `dot-` prefix instead (e.g., `dot-config`, `dot-tmux.conf`, `dot-zshrc`).
+The managed set includes:
 
-Day-to-day shell setup uses **fish** (included in `just install`). A legacy `zsh/dot-zshrc` remains in the repository for reference; it is **not** stowed by default—run `stow --dotfiles zsh` manually if you want it linked to `~/.zshrc`.
+- `dot_config/fish` -> `~/.config/fish`
+- `dot_config/nvim` -> `~/.config/nvim`
+- `dot_config/aerospace` -> `~/.config/aerospace` (macOS only)
+- `dot_config/ghostty` -> `~/.config/ghostty`
+- `dot_ideavimrc` -> `~/.ideavimrc`
+- `dot_tmux.conf` -> `~/.tmux.conf`
+- `dot_vimrc` -> `~/.vimrc`
+- `dot_zshrc` -> `~/.zshrc`
+
+`RSS/` is kept for reference and excluded from `chezmoi apply` by `.chezmoiignore`.
 
 ## Usage
 
-Because of the `dot-` prefix structure, you **must use the `--dotfiles` flag** when running Stow commands. This ensures Stow automatically converts the `dot-` prefix back to `.` when creating the symlinks in your home directory.
-
-Run Stow from the repository root (the directory that contains the package folders such as `fish` and `nvim`).
-
-### Install (recommended)
-
-Use [Just](https://github.com/casey/just) with the `justfile` in this repository so only intended packages are linked. This avoids `stow --dotfiles *`, which would also pick up non-configuration trees such as `RSS/`. From the repository root:
+Install chezmoi first:
 
 ```bash
-just install      # symlink fish, nvim, tmux, aerospace
-just dry-run      # stow -n -v (no changes)
-just uninstall    # stow -D (remove symlinks for those packages)
+brew install chezmoi
+# or
+sh -c "$(curl -fsLS get.chezmoi.io)"
 ```
 
-The package list is `fish nvim tmux aerospace`. Edit `packages` at the top of the `justfile` if you need a different set.
-
-### Stow (manual)
-
-To symlink a single package (e.g., `nvim`) to your home directory:
+From the repository root:
 
 ```bash
-stow --dotfiles nvim
+just install    # chezmoi apply --source .
+just dry-run    # chezmoi diff --source .
+just diff       # same as dry-run
 ```
 
-To remove symlinks for one package:
+Or run chezmoi directly:
 
 ```bash
-stow -D --dotfiles nvim
+chezmoi apply --source .
+chezmoi diff --source .
 ```
+
+## Local Files
+
+Machine-specific fish files are intentionally not tracked:
+
+- `~/.config/fish/fish_variables`
+- `~/.config/fish/secrets.fish`
+- `~/.config/fish/conf.d/local.fish`

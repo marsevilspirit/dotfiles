@@ -1,14 +1,12 @@
-packages := 'fish nvim tmux aerospace'
-
 [private]
 default:
 	@just --list
 
 install:
-	stow --dotfiles {{packages}}
+	chezmoi apply --source .
 
 dry-run:
-	stow --dotfiles -n -v {{packages}}
+	chezmoi diff --source .; status=$?; test $status -le 1
 
-uninstall:
-	stow -D --dotfiles {{packages}}
+diff:
+	chezmoi diff --source .; status=$?; test $status -le 1
