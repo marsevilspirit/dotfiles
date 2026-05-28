@@ -9,20 +9,12 @@ permissions:
   contents: read
 
 jobs:
-  verify:
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-    runs-on: ${{ matrix.os }}
+  verify-linux:
+    runs-on: ubuntu-latest
     concurrency:
-      group: ci-${{ github.workflow }}-${{ github.ref }}-${{ matrix.os }}
+      group: ci-${{ github.workflow }}-${{ github.ref }}-linux
       cancel-in-progress: true
     timeout-minutes: 20
-    defaults:
-      run:
-        shell: bash
-
     steps:
       - uses: actions/checkout@v4
 
@@ -38,12 +30,11 @@ jobs:
           test -f dot_vimrc
           test -f dot_zshrc
 
-      - name: Install Chezmoi and Neovim (Linux)
-        if: runner.os == 'Linux'
+      - name: Install chezmoi and Neovim
         run: |
           set -euo pipefail
           sudo apt-get update
-          sudo apt-get install -y curl git
+          sudo apt-get install -y curl
 
           sh -c "$(curl -fsLS get.chezmoi.io)" -- -b "${RUNNER_TEMP}/bin"
           echo "${RUNNER_TEMP}/bin" >> "$GITHUB_PATH"
@@ -52,15 +43,103 @@ jobs:
             | tar xz -C "${RUNNER_TEMP}"
           echo "${RUNNER_TEMP}/nvim-linux-x86_64/bin" >> "$GITHUB_PATH"
 
-      - name: Install Chezmoi and Neovim (macOS)
-        if: runner.os == 'macOS'
+      - name: Chezmoi diff
         run: |
           set -euo pipefail
-          brew install chezmoi git neovim
+          HOME="${RUNNER_TEMP}/dotfiles-ci-home"
+          mkdir -p "$HOME"
+          chezmoi --source="${GITHUB_WORKSPACE}" --destination="$HOME" diff
 
-      - name: Install Chezmoi and Neovim (Windows)
-        if: runner.os == 'Windows'
+      - name: Chezmoi apply + Neovim checkhealth
+        run: |
+          set -euo pipefail
+          export HOME="${RUNNER_TEMP}/dotfiles-ci-home"
+          mkdir -p "$HOME"
+          chezmoi --source="${GITHUB_WORKSPACE}" --destination="$HOME" apply --verbose
+          test -f "$HOME/.config/nvim/init.lua"
+          test -f "$HOME/.config/ghostty/config"
+          test -f "$HOME/.ideavimrc"
+          test -f "$HOME/.vimrc"
+          test -f "$HOME/.zshrc"
+          test ! -e "$HOME/.config/aerospace"
+          nvim --headless "+checkhealth" "+qa"
+
+  verify-macos:
+    runs-on: macos-latest
+    concurrency:
+      group: ci-${{ github.workflow }}-${{ github.ref }}-macos
+      cancel-in-progress: true
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify chezmoi source paths exist
+        run: |
+          set -euo pipefail
+          test -d dot_config/fish
+          test -d dot_config/nvim
+          test -d dot_config/aerospace
+          test -d dot_config/ghostty
+          test -f dot_ideavimrc
+          test -f dot_tmux.conf
+          test -f dot_vimrc
+          test -f dot_zshrc
+
+      - name: Install chezmoi and Neovim
+        run: |
+          set -euo pipefail
+          brew install chezmoi neovim
+
+      - name: Chezmoi diff
+        run: |
+          set -euo pipefail
+          HOME="${RUNNER_TEMP}/dotfiles-ci-home"
+          mkdir -p "$HOME"
+          chezmoi --source="${GITHUB_WORKSPACE}" --destination="$HOME" diff
+
+      - name: Chezmoi apply + Neovim checkhealth
+        run: |
+          set -euo pipefail
+          export HOME="${RUNNER_TEMP}/dotfiles-ci-home"
+          mkdir -p "$HOME"
+          chezmoi --source="${GITHUB_WORKSPACE}" --destination="$HOME" apply --verbose
+          test -f "$HOME/.config/nvim/init.lua"
+          test -f "$HOME/.config/ghostty/config"
+          test -f "$HOME/.ideavimrc"
+          test -f "$HOME/.vimrc"
+          test -f "$HOME/.zshrc"
+          test -f "$HOME/.config/aerospace/aerospace.toml"
+          nvim --headless "+checkhealth" "+qa"
+
+  verify-windows:
+    runs-on: windows-latest
+    concurrency:
+      group: ci-${{ github.workflow }}-${{ github.ref }}-windows
+      cancel-in-progress: true
+    timeout-minutes: 20
+    defaults:
+      run:
         shell: pwsh
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify chezmoi source paths exist
+        run: |
+          $ErrorActionPreference = 'Stop'
+          @(
+            'dot_config/fish',
+            'dot_config/nvim',
+            'dot_config/aerospace',
+            'dot_config/ghostty',
+            'dot_ideavimrc',
+            'dot_tmux.conf',
+            'dot_vimrc',
+            'dot_zshrc'
+          ) | ForEach-Object {
+            if (-not (Test-Path $_)) { throw "Missing source path: $_" }
+          }
+
+      - name: Install chezmoi and Neovim
         run: |
           $ErrorActionPreference = 'Stop'
           $bin = Join-Path $env:RUNNER_TEMP 'bin'
@@ -94,36 +173,17 @@ jobs:
           if (-not $nvimExe) { throw 'nvim.exe not found after extracting Neovim archive' }
           Add-Content $env:GITHUB_PATH $nvimExe.DirectoryName
 
-      - name: Chezmoi diff (Unix)
-        if: runner.os != 'Windows'
+      - name: Chezmoi diff
         run: |
-          set -euo pipefail
-          HOME="${RUNNER_TEMP}/dotfiles-ci-home"
-          mkdir -p "$HOME"
-          chezmoi --source="${GITHUB_WORKSPACE}" --destination="$HOME" diff
+          $ErrorActionPreference = 'Stop'
+          $tempHome = Join-Path $env:RUNNER_TEMP 'dotfiles-ci-home'
+          $env:HOME = $tempHome
+          $env:USERPROFILE = $tempHome
+          $env:XDG_CONFIG_HOME = Join-Path $tempHome '.config'
+          New-Item -ItemType Directory -Force -Path $tempHome | Out-Null
+          chezmoi --source="$env:GITHUB_WORKSPACE" --destination="$tempHome" diff
 
-      - name: Chezmoi apply + Neovim checkhealth (Unix)
-        if: runner.os != 'Windows'
-        run: |
-          set -euo pipefail
-          export HOME="${RUNNER_TEMP}/dotfiles-ci-home"
-          mkdir -p "$HOME"
-          chezmoi --source="${GITHUB_WORKSPACE}" --destination="$HOME" apply --verbose
-          test -f "$HOME/.config/nvim/init.lua"
-          test -f "$HOME/.config/ghostty/config"
-          test -f "$HOME/.ideavimrc"
-          test -f "$HOME/.vimrc"
-          test -f "$HOME/.zshrc"
-          if [[ "$RUNNER_OS" == "macOS" ]]; then
-            test -f "$HOME/.config/aerospace/aerospace.toml"
-          else
-            test ! -e "$HOME/.config/aerospace"
-          fi
-          nvim --headless "+checkhealth" "+qa"
-
-      - name: Chezmoi apply + Neovim checkhealth (Windows)
-        if: runner.os == 'Windows'
-        shell: pwsh
+      - name: Chezmoi apply + Neovim checkhealth
         run: |
           $ErrorActionPreference = 'Stop'
           $ws = $env:GITHUB_WORKSPACE

@@ -88,4 +88,4 @@ Create `secrets.fish` on each machine as needed; do not commit it.
 
 ## CI
 
-GitHub Actions (`.github/workflows/ci.yml`) runs on Ubuntu, macOS, and Windows: verify source paths, `chezmoi diff` / `apply` into a temporary `$HOME`, and `nvim --headless "+checkhealth"` on Unix and Windows.
+GitHub Actions (`.github/workflows/ci.yml`) runs three jobs (`verify-linux`, `verify-macos`, `verify-windows`): each checks source paths, `chezmoi diff` / `apply` into a temporary home directory, and `nvim --headless "+checkhealth"`.
