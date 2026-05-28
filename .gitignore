@@ -1,10 +1,3 @@
 fish/dot-config/fish/fish_variables
 fish/dot-config/fish/secrets.fish
 fish/dot-config/fish/conf.d/local.fish
-
-nvim/dot-config/nvim/tags
-nvim/dot-config/nvim/test.sh
-nvim/dot-config/nvim/.luarc.json
-nvim/dot-config/nvim/nvim
-nvim/dot-config/nvim/spell/
-nvim/dot-config/nvim/lazy-lock.json
