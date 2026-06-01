@@ -120,3 +120,6 @@ export MY_INSTALL_DIR=$HOME/.local
 export PATH="$MY_INSTALL_DIR/bin:$PATH"
 
 export PATH="$PATH:$(go env GOPATH)/bin"
+
+# Added by CodeFuse CLI installer
+export PATH="$HOME/.local/bin:$PATH"
