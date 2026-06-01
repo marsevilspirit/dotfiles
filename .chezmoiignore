@@ -8,11 +8,6 @@ justfile
 .config/fish/secrets.fish
 .config/fish/conf.d/local.fish
 
-{{ if ne .chezmoi.os "darwin" }}
-# aerospace is macOS-only.
-.config/aerospace/
-{{ end }}
-
 # Non-default content kept in the repository for reference.
 RSS/
 
@@ -20,7 +15,6 @@ RSS/
 fish/
 nvim/
 tmux/
-aerospace/
 ghostty/
 ideavim/
 vimrc/

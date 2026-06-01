@@ -23,7 +23,6 @@ jobs:
           set -euo pipefail
           test -d dot_config/fish
           test -d dot_config/nvim
-          test -d dot_config/aerospace
           test -d dot_config/ghostty
           test -f dot_ideavimrc
           test -f dot_tmux.conf
@@ -61,7 +60,6 @@ jobs:
           test -f "$HOME/.ideavimrc"
           test -f "$HOME/.vimrc"
           test -f "$HOME/.zshrc"
-          test ! -e "$HOME/.config/aerospace"
           nvim --headless "+checkhealth" "+qa"
 
   verify-macos:
@@ -78,7 +76,6 @@ jobs:
           set -euo pipefail
           test -d dot_config/fish
           test -d dot_config/nvim
-          test -d dot_config/aerospace
           test -d dot_config/ghostty
           test -f dot_ideavimrc
           test -f dot_tmux.conf
@@ -108,7 +105,6 @@ jobs:
           test -f "$HOME/.ideavimrc"
           test -f "$HOME/.vimrc"
           test -f "$HOME/.zshrc"
-          test -f "$HOME/.config/aerospace/aerospace.toml"
           nvim --headless "+checkhealth" "+qa"
 
   verify-windows:
@@ -129,7 +125,6 @@ jobs:
           @(
             'dot_config/fish',
             'dot_config/nvim',
-            'dot_config/aerospace',
             'dot_config/ghostty',
             'dot_ideavimrc',
             'dot_tmux.conf',
@@ -208,8 +203,5 @@ jobs:
           }
           if (-not (Test-Path (Join-Path $tempHome '.zshrc'))) {
             throw 'Zsh config was not applied by chezmoi'
-          }
-          if (Test-Path (Join-Path $env:XDG_CONFIG_HOME 'aerospace')) {
-            throw 'AeroSpace config should be ignored on Windows'
           }
           nvim --headless "+checkhealth" "+qa"

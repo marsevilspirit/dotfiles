@@ -9,7 +9,6 @@ Personal dotfiles managed with [chezmoi](https://www.chezmoi.io/). The repositor
 | `dot_config/fish/` | `~/.config/fish` |
 | `dot_config/nvim/` | `~/.config/nvim` |
 | `dot_config/ghostty/` | `~/.config/ghostty` |
-| `dot_config/aerospace/` | `~/.config/aerospace` (macOS only) |
 | `dot_tmux.conf` | `~/.tmux.conf` |
 | `dot_vimrc` | `~/.vimrc` |
 | `dot_zshrc` | `~/.zshrc` |
@@ -83,7 +82,6 @@ Create `secrets.fish` on each machine as needed; do not commit it.
 
 ## Platform notes
 
-- **AeroSpace** (`dot_config/aerospace/`) is applied only on macOS. On Linux and Windows, `.chezmoiignore` excludes it.
 - **`RSS/`** in the repo is reference OPML only; it is not applied to `$HOME`.
 
 ## CI
