@@ -22,6 +22,12 @@ vim.o.mouse = 'a'
 vim.o.showmode = false
 vim.o.termguicolors = true
 
+-- Use OSC52 over bare SSH so yanks reach the local terminal clipboard.
+local in_ssh = (vim.env.SSH_TTY and vim.env.SSH_TTY ~= '') or (vim.env.SSH_CONNECTION and vim.env.SSH_CONNECTION ~= '')
+if in_ssh and not vim.env.TMUX then
+  vim.g.clipboard = 'osc52'
+end
+
 -- Sync clipboard between OS and Neovim (deferred for startup speed)
 vim.schedule(function()
   vim.o.clipboard = 'unnamedplus'

@@ -1,7 +1,8 @@
 config-file = theme
 
 font-size = 16
-shell-integration-features = no-cursor
 cursor-style = block
 cursor-style-blink = false
 mouse-hide-while-typing = true
+
+shell-integration-features = no-cursor,ssh-terminfo
