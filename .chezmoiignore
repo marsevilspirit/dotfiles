@@ -3,6 +3,9 @@
 .chezmoiignore
 README.md
 justfile
+tests/
+*.log
+**/*.log
 
 .config/fish/fish_variables
 .config/fish/secrets.fish

@@ -44,6 +44,10 @@
       "rev": "ff2cbcba459b637ec3fd165a2be59b7bbaeedf0d",
       "src": "https://github.com/folke/lazydev.nvim"
     },
+    "leetcode.nvim": {
+      "rev": "4e8b3683940a8377379ce9398e7f329e3560b42c",
+      "src": "https://github.com/kawre/leetcode.nvim"
+    },
     "mason-tool-installer.nvim": {
       "rev": "443f1ef8b5e6bf47045cb2217b6f748a223cf7dc",
       "src": "https://github.com/WhoIsSethDaniel/mason-tool-installer.nvim"
@@ -56,9 +60,17 @@
       "rev": "60b5aaac2f0465d67699702e76b9baebf52cb42f",
       "src": "https://github.com/echasnovski/mini.nvim"
     },
+    "nui.nvim": {
+      "rev": "10fc361835c856ba4233ef5ea135b919bf3dce97",
+      "src": "https://github.com/MunifTanjim/nui.nvim"
+    },
     "nvim-autopairs": {
       "rev": "7b9923abad60b903ece7c52940e1321d39eccc79",
       "src": "https://github.com/windwp/nvim-autopairs"
+    },
+    "nvim-treesitter": {
+      "rev": "427e9222363d07c32d6db6169e4049c28d58d141",
+      "src": "https://github.com/nvim-treesitter/nvim-treesitter"
     },
     "nvim-web-devicons": {
       "rev": "2795c26c916bb3c57dde308b82be51971fa92747",

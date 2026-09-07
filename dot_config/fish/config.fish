@@ -1,4 +1,4 @@
-set -l secrets_fish "$HOME/.config/fish/secrets.fish"
+set -l secrets_fish "$__fish_config_dir/secrets.fish"
 if test -f $secrets_fish
     source $secrets_fish
 end
@@ -8,7 +8,9 @@ if status is-interactive
 
     fish_config theme choose "Dracula Official"
 
-    export PATH="$PATH:$(go env GOPATH)/bin"
+    if type -q go
+        fish_add_path --append --path (go env GOPATH)/bin
+    end
 
     set -g fish_autosuggestion_enabled 1
 
@@ -19,6 +21,7 @@ if status is-interactive
     abbr s fastfetch
 
     if type -q zoxide
+        zoxide init fish | source
         abbr cd z
     end
 
@@ -28,8 +31,9 @@ if status is-interactive
         abbr lla "ll -a"
     end
 
-    fzf --fish | source
-    zoxide init fish | source
+    if type -q fzf
+        fzf --fish | source
+    end
 end
 
 export PATH="$HOME/.local/bin:$PATH"

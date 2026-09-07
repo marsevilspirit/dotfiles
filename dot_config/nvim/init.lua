@@ -1,6 +1,9 @@
 -- Enable fast module loading (improves startup ~30%)
 vim.loader.enable()
 
+-- Blink opens its log before other plugins create the directory on first startup.
+vim.fn.mkdir(vim.fn.stdpath 'log', 'p')
+
 -- Set <space> as the leader key
 -- NOTE: Must happen before plugins are loaded
 vim.g.mapleader = ' '
@@ -113,8 +116,14 @@ vim.api.nvim_create_autocmd({ 'BufEnter' }, {
 -- Auto save on leaving insert mode
 vim.api.nvim_create_autocmd({ 'InsertLeave' }, {
   desc = 'Auto save on leaving insert mode',
-  callback = function()
-    vim.fn.execute 'silent! write'
+  callback = function(event)
+    local buf = event.buf
+    local opts = vim.bo[buf]
+    if opts.buftype == '' and opts.modified and opts.modifiable and not opts.readonly and vim.api.nvim_buf_get_name(buf) ~= '' then
+      vim.api.nvim_buf_call(buf, function()
+        vim.cmd 'silent update'
+      end)
+    end
   end,
 })
 
@@ -129,10 +138,6 @@ vim.api.nvim_create_autocmd('PackChanged', {
     if name == 'LuaSnip' then
       if vim.fn.executable 'make' == 1 then
         vim.system({ 'make', 'install_jsregexp' }, { cwd = ev.data.path })
-      end
-    elseif name == 'blink.cmp' then
-      if vim.fn.executable 'cargo' == 1 then
-        vim.system({ 'cargo', 'build', '--release' }, { cwd = ev.data.path })
       end
     end
   end,
@@ -168,6 +173,11 @@ vim.pack.add {
 
   -- Markdown
   'https://github.com/MeanderingProgrammer/render-markdown.nvim',
+
+  -- LeetCode
+  'https://github.com/MunifTanjim/nui.nvim',
+  'https://github.com/nvim-treesitter/nvim-treesitter',
+  'https://github.com/kawre/leetcode.nvim',
 
   -- Git
   'https://github.com/lewis6991/gitsigns.nvim',

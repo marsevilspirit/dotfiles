@@ -1,0 +1,6 @@
+CompileFlags:
+  Add: [-include, "{{ .chezmoi.homeDir }}/.local/share/nvim/leetcode/leetcode.hpp"]
+
+# Practice templates preload common headers before a solution uses them.
+Diagnostics:
+  UnusedIncludes: None

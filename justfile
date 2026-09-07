@@ -18,29 +18,17 @@ init:
 managed:
 	chezmoi managed --source .
 
-# Sync all managed files from HOME into this repo
+# Check sync, autosave, startup error detection, and shell syntax in temporary directories
+check:
+	python3 tests/check.py
+
+# Sync modified managed files from HOME; edit templates in the source instead
 sync:
-	#!/usr/bin/env bash
-	set -euo pipefail
-	mapfile -t targets < <(chezmoi managed --source . --include=files)
-	existing=()
-	for target in "${targets[@]}"; do
-		[[ -f "$target" ]] && existing+=("$target")
-	done
-	((${#existing[@]})) || exit 0
-	chezmoi add --source . "${existing[@]}"
+	chezmoi re-add --source .
 
 # Preview what sync would update (HOME → repo)
 sync-diff:
-	#!/usr/bin/env bash
-	set -euo pipefail
-	mapfile -t targets < <(chezmoi managed --source . --include=files)
-	existing=()
-	for target in "${targets[@]}"; do
-		[[ -f "$target" ]] && existing+=("$target")
-	done
-	((${#existing[@]})) || exit 0
-	chezmoi add --source . --dry-run --verbose "${existing[@]}"
+	chezmoi re-add --source . --dry-run --verbose
 
 # Add or update paths from HOME (e.g. just add ~/.config/nvim/init.lua)
 add *paths:
