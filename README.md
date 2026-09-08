@@ -33,15 +33,15 @@ sh -c "$(curl -fsLS get.chezmoi.io)"
 go install github.com/twpayne/chezmoi/v2@latest
 ```
 
-The Neovim configuration uses `vim.pack` and native LSP. Use [Neovim nightly](https://github.com/neovim/neovim/releases/tag/nightly), as CI does; if you use Bob, run `bob use nightly`. The locked nvim-treesitter requires Neovim 0.12 or newer.
+The Neovim configuration uses `vim.pack` and native LSP. Use [Neovim nightly](https://github.com/neovim/neovim/releases/tag/nightly), as CI does; run `bob use nightly` to install and select it. The locked nvim-treesitter requires Neovim 0.12 or newer. Ensure Bob's Neovim directory (`~/.local/share/bob/nvim-bin` on macOS/Linux) is on your `PATH`.
 
-For the configured editor features on macOS:
+On macOS, [Brewfile](Brewfile) lists the terminal, shell tools, editor dependencies, and Python for checks. From the repository root:
 
 ```bash
-brew install fish ripgrep fd go node tree-sitter-cli
-# Optional shell conveniences; fish also starts without these:
-brew install fzf zoxide eza fastfetch
+just install  # or: brew bundle install --file=Brewfile --no-upgrade
 ```
+
+This installs Bob, which manages Neovim separately. `--no-upgrade` skips routine upgrades of installed packages; Homebrew may still upgrade dependencies required by a new installation. Fish's optional helpers (`fzf`, `zoxide`, `eza`, and `fastfetch`) are included for the configured shortcuts.
 
 On Linux or Windows, install the equivalent tools through your package manager. Parser builds require a C compiler, `curl`, `tar`, and tree-sitter CLI >= 0.26.1. Mason uses Go for `gopls` and Node/npm for `pyright` and `prettier`; it downloads the other configured servers as binaries. Neovim installs `stylua`, `clangd`, `rust-analyzer`, `lua-language-server`, `gopls`, `protols`, `pyright`, and `prettier` on first startup. Watch progress with `:Mason`; after a failed run, inspect `:MasonLog` and retry missing tools with `:MasonToolsInstall`.
 
@@ -50,6 +50,8 @@ On Linux or Windows, install the equivalent tools through your package manager. 
 ```bash
 git clone <repo-url> ~/dotfiles   # or your preferred path
 cd ~/dotfiles
+just install                      # macOS; requires Homebrew and just
+bob use nightly                   # install/select Neovim through Bob
 just apply                        # or: chezmoi apply --source .
 ```
 
@@ -61,6 +63,7 @@ From the repository root:
 
 ```bash
 just --list   # show recipes and descriptions
+just install # install macOS dependencies from Brewfile
 just diff     # preview changes (chezmoi diff --source .)
 just apply    # apply to $HOME (chezmoi apply --source .)
 just sync-diff # preview HOME -> repo changes

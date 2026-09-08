@@ -31,7 +31,7 @@ with tempfile.TemporaryDirectory(prefix="dotfiles-check-") as directory:
                     "*.log", "secrets.fish", "fish_variables", "local.fish"))
             else:
                 shutil.copy2(path, source / path.name)
-    for name in ("justfile", ".chezmoiignore", ".chezmoiremove", ".gitignore"):
+    for name in ("justfile", "Brewfile", ".chezmoiignore", ".chezmoiremove", ".gitignore"):
         shutil.copy2(ROOT / name, source / name)
     (source / "dot_probe.tmpl").write_text("{{ .chezmoi.os }}\n")
     (source / "nvim.log").write_text("must stay local\n")
@@ -65,6 +65,7 @@ with tempfile.TemporaryDirectory(prefix="dotfiles-check-") as directory:
     managed = run(just + ["managed"], cwd=source, env=env).stdout.replace("\\", "/")
     assert ".config/nvim/init.lua" in managed
     assert ".log" not in managed and "tests/" not in managed, managed
+    assert "Brewfile" not in managed, managed
     run(just + ["diff"], cwd=source, env=env)
     run(just + ["apply"], cwd=source, env=env)
     for name in retired_fish:
@@ -75,6 +76,7 @@ with tempfile.TemporaryDirectory(prefix="dotfiles-check-") as directory:
                  ".local/share/nvim/leetcode/leetcode.hpp", ".local/share/nvim/leetcode/.clangd"):
         assert (target / name).is_file(), name
     assert not (target / "nvim.log").exists()
+    assert not (target / "Brewfile").exists()
     original = (source / "dot_vimrc").read_text()
     template = (source / "dot_probe.tmpl").read_text()
     (target / ".vimrc").write_text(original + '\n" sync regression\n')

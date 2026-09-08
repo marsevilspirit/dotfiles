@@ -2,6 +2,7 @@
 .gitignore
 .chezmoiignore
 README.md
+Brewfile
 justfile
 tests/
 *.log

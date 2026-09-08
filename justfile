@@ -2,6 +2,10 @@
 default:
 	@just --list
 
+# Install macOS dependencies from Brewfile
+install:
+	brew bundle install --file=Brewfile --no-upgrade
+
 # Apply managed dotfiles to HOME (~/.config, ~/.tmux.conf, etc.)
 apply:
 	chezmoi apply --source .
