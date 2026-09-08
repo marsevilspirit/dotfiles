@@ -126,9 +126,13 @@ These paths are listed in `.chezmoiignore` and are never overwritten by `chezmoi
 |------|---------|
 | `~/.config/fish/fish_variables` | fish universal variables |
 | `~/.config/fish/secrets.fish` | API keys and tokens (sourced from `config.fish` if present) |
-| `~/.config/fish/conf.d/local.fish` | per-machine fish overrides |
+| `~/.config/fish/local.fish` | per-machine fish overrides, sourced last from `config.fish` |
 
 Create `secrets.fish` on each machine as needed; do not commit it.
+
+`local.fish` runs in both interactive and non-interactive shells. Wrap interactive-only customizations in `if status is-interactive ... end`.
+
+If you previously used `~/.config/fish/conf.d/local.fish`, move it to `~/.config/fish/local.fish`. If the new file already exists, merge the contents before removing the old file. Fish loads `conf.d/*.fish` before `config.fish`, so leaving the old file there would still run those settings early. Both paths remain ignored by Git and chezmoi.
 
 Runtime `*.log` files are excluded from Git and chezmoi. Existing local logs are left in place.
 
@@ -138,6 +142,6 @@ Runtime `*.log` files are excluded from Git and chezmoi. Existing local logs are
 
 ## CI
 
-GitHub Actions runs the same checks on Linux, macOS, and Windows. `just check` requires Python 3, Bash, chezmoi, just, and Neovim; Unix also requires fish and zsh. It tests the actual sync recipes in a temporary destination, template preservation, log exclusions, autosave behavior, and rejection of deliberately broken Neovim startup/health checks. Unix jobs syntax-check every fish file and `.zshrc`, and start fish without optional tools.
+GitHub Actions runs the same checks on Linux, macOS, and Windows. `just check` requires Python 3, Bash, chezmoi, just, and Neovim; Unix also requires fish and zsh. It tests the actual sync recipes in a temporary destination, template preservation, log exclusions, autosave behavior, and rejection of deliberately broken Neovim startup/health checks. Unix jobs syntax-check every fish file and `.zshrc`, start fish without optional tools, and verify that local overrides load last and only once in interactive and non-interactive shells.
 
 CI additionally runs `python tests/check.py --integration`: apply the configuration in isolation, wait for LSP/formatter and HTML parser installation, then check `vim.lsp`, `vim.treesitter`, `nvim-treesitter`, and `blink.cmp`. Startup errors, missing required executables, parser timeouts, and health errors fail the job explicitly. Warnings remain visible. Terminal/graphics checks belong in an interactive `:checkhealth`, since headless runners have no graphical terminal. Integration checks require network access; temporary configurations and data are removed afterward.

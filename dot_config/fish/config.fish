@@ -38,3 +38,7 @@ end
 
 export PATH="$HOME/.local/bin:$PATH"
 fish_add_path --path "$HOME/.cargo/bin"
+
+if test -f "$__fish_config_dir/local.fish"
+    source "$__fish_config_dir/local.fish"
+end

@@ -9,6 +9,7 @@ tests/
 
 .config/fish/fish_variables
 .config/fish/secrets.fish
+.config/fish/local.fish
 .config/fish/conf.d/local.fish
 
 # Non-default content kept in the repository for reference.

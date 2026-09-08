@@ -117,6 +117,18 @@ with tempfile.TemporaryDirectory(prefix="dotfiles-check-") as directory:
         assert "Unknown command" not in result.stderr, result.stderr
         print("PASS: fish/zsh syntax; fish starts without optional tools")
 
+        (target / ".config/fish/local.fish").write_text(
+            "set -g fish_autosuggestion_enabled 0\n"
+            "set -gx PATH /dotfiles-local-bin\n"
+            "set -ga dotfiles_local_loads loaded\n")
+        for flags in ([], ["-i"]):
+            run([fish, *flags, "-c",
+                 'test "$fish_autosuggestion_enabled" = 0; '
+                 'and test "$PATH" = /dotfiles-local-bin; '
+                 'and test (count $dotfiles_local_loads) -eq 1'],
+                env={**env, "HOME": str(target)})
+        print("PASS: fish local overrides load last and once in both shell modes")
+
     if "--integration" in sys.argv:
         env["XDG_CONFIG_HOME"] = str(target / ".config")
         result = run(["nvim", "--headless", "-i", "NONE"] + gate, env=env, timeout=900)
