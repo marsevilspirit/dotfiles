@@ -127,22 +127,6 @@ vim.api.nvim_create_autocmd({ 'InsertLeave' }, {
   end,
 })
 
--- [[ PackChanged hooks — MUST be defined before vim.pack.add() ]]
-vim.api.nvim_create_autocmd('PackChanged', {
-  callback = function(ev)
-    local name, kind = ev.data.spec.name, ev.data.kind
-    if kind ~= 'install' and kind ~= 'update' then
-      return
-    end
-
-    if name == 'LuaSnip' then
-      if vim.fn.executable 'make' == 1 then
-        vim.system({ 'make', 'install_jsregexp' }, { cwd = ev.data.path })
-      end
-    end
-  end,
-})
-
 -- [[ Install and load plugins with vim.pack ]]
 vim.pack.add {
   -- Colorscheme
@@ -160,7 +144,6 @@ vim.pack.add {
   -- Completion
   'https://github.com/saghen/blink.lib',
   'https://github.com/saghen/blink.cmp',
-  'https://github.com/L3MON4D3/LuaSnip',
   'https://github.com/folke/lazydev.nvim',
 
   -- LSP

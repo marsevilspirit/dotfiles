@@ -31,13 +31,20 @@ with tempfile.TemporaryDirectory(prefix="dotfiles-check-") as directory:
                     "*.log", "secrets.fish", "fish_variables", "local.fish"))
             else:
                 shutil.copy2(path, source / path.name)
-    for name in ("justfile", ".chezmoiignore", ".gitignore"):
+    for name in ("justfile", ".chezmoiignore", ".chezmoiremove", ".gitignore"):
         shutil.copy2(ROOT / name, source / name)
     (source / "dot_probe.tmpl").write_text("{{ .chezmoi.os }}\n")
     (source / "nvim.log").write_text("must stay local\n")
     (source / "dot_config/nvim/nested.log").write_text("must stay local\n")
     (source / "tests").mkdir()
     (source / "tests/probe.txt").write_text("must stay local\n")
+
+    retired_fish = ("completions/fisher.fish", "conf.d/fish_frozen_theme.fish",
+                    "fish_plugins", "functions/fisher.fish")
+    for name in retired_fish:
+        path = target / ".config/fish" / name
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text("retired\n")
 
     env = dict(os.environ)
     for variable, name in (("XDG_CONFIG_HOME", "config"), ("XDG_DATA_HOME", "data"),
@@ -60,6 +67,9 @@ with tempfile.TemporaryDirectory(prefix="dotfiles-check-") as directory:
     assert ".log" not in managed and "tests/" not in managed, managed
     run(just + ["diff"], cwd=source, env=env)
     run(just + ["apply"], cwd=source, env=env)
+    for name in retired_fish:
+        assert not (target / ".config/fish" / name).exists(), name
+    assert (target / ".config/fish/themes/Dracula Official.theme").is_file()
     for name in (".config/nvim/init.lua", ".config/ghostty/config", ".config/fish/config.fish",
                  ".tmux.conf", ".vimrc", ".zshrc", ".ideavimrc",
                  ".local/share/nvim/leetcode/leetcode.hpp", ".local/share/nvim/leetcode/.clangd"):

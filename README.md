@@ -53,7 +53,7 @@ cd ~/dotfiles
 just apply                        # or: chezmoi apply --source .
 ```
 
-Fisher and the Dracula theme are included in the source. Applying the dotfiles does not automatically run Fisher updates.
+The Dracula theme is included in the source and loaded with `fish_config theme choose "Dracula Official"`. Update the theme in this repository, then apply it with chezmoi. Applying also removes the retired Fisher files and frozen theme snapshot listed in `.chezmoiremove`.
 
 ## Daily commands
 

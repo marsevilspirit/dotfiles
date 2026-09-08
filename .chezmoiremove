@@ -1,0 +1,4 @@
+.config/fish/completions/fisher.fish
+.config/fish/conf.d/fish_frozen_theme.fish
+.config/fish/fish_plugins
+.config/fish/functions/fisher.fish

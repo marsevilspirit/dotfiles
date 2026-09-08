@@ -22,8 +22,6 @@ require('blink.cmp').setup {
     },
   },
 
-  snippets = { preset = 'luasnip' },
-
   fuzzy = { implementation = 'lua' },
 
   signature = { enabled = true },

@@ -56,6 +56,13 @@ vim.api.nvim_create_autocmd('VimEnter', {
             'HTML parser installation did not complete'
           )
           assert(vim.treesitter.query.get('html', 'highlights'), 'HTML highlight queries are missing')
+          local snippets = require('blink.cmp.config').snippets
+          snippets.expand('call(${1:argument}, ${2:other})$0')
+          assert(vim.api.nvim_get_current_line() == 'call(argument, other)', 'Snippet expansion failed')
+          assert(snippets.active { direction = 1 }, 'Snippet has no next placeholder')
+          snippets.jump(1)
+          assert(snippets.active { direction = -1 }, 'Snippet placeholder navigation failed')
+          vim.snippet.stop()
           -- Terminal/image support is checked interactively, not in a headless runner.
           checks = 'vim.lsp vim.treesitter nvim-treesitter blink.cmp'
         end

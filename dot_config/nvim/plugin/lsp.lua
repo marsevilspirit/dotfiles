@@ -102,9 +102,6 @@ vim.diagnostic.config {
   virtual_text = {
     source = 'if_many',
     spacing = 2,
-    format = function(diagnostic)
-      return diagnostic.message
-    end,
   },
 }
 
@@ -132,30 +129,8 @@ vim.api.nvim_create_autocmd('LspAttach', {
     map('gW', function() Snacks.picker.lsp_workspace_symbols() end, 'Open Workspace Symbols')
     map('gt', function() Snacks.picker.lsp_type_definitions() end, '[G]oto [T]ype Definition')
 
-    -- Document highlight on cursor hold
-    local client = vim.lsp.get_client_by_id(event.data.client_id)
-    if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight, event.buf) then
-      local highlight_augroup = vim.api.nvim_create_augroup('lsp-highlight', { clear = false })
-      vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
-        buffer = event.buf,
-        group = highlight_augroup,
-        callback = vim.lsp.buf.document_highlight,
-      })
-      vim.api.nvim_create_autocmd({ 'CursorMoved', 'CursorMovedI' }, {
-        buffer = event.buf,
-        group = highlight_augroup,
-        callback = vim.lsp.buf.clear_references,
-      })
-      vim.api.nvim_create_autocmd('LspDetach', {
-        group = vim.api.nvim_create_augroup('lsp-detach', { clear = true }),
-        callback = function(event2)
-          vim.lsp.buf.clear_references()
-          vim.api.nvim_clear_autocmds { group = 'lsp-highlight', buffer = event2.buf }
-        end,
-      })
-    end
-
     -- Toggle inlay hints
+    local client = vim.lsp.get_client_by_id(event.data.client_id)
     if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint, event.buf) then
       map('<leader>th', function()
         vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = event.buf })
