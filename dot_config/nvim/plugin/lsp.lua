@@ -64,6 +64,12 @@ vim.lsp.config('rust_analyzer', {
   root_markers = { 'Cargo.toml', '.git' },
 })
 
+vim.lsp.config('sourcekit', {
+  cmd = { 'sourcekit-lsp' },
+  filetypes = { 'swift' },
+  root_markers = { 'buildServer.json', '.bsp', 'Package.swift', 'compile_commands.json', '.git' },
+})
+
 vim.lsp.config('protols', {
   cmd = { 'protols' },
   filetypes = { 'proto' },
@@ -85,6 +91,9 @@ vim.lsp.enable {
   'protols',
   'pyright',
 }
+
+-- SourceKit-LSP is provided by Xcode or the Swift toolchain, not Mason.
+vim.lsp.enable('sourcekit', vim.fn.executable 'sourcekit-lsp' == 1)
 
 -- Diagnostic configuration
 vim.diagnostic.config {

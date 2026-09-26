@@ -45,6 +45,8 @@ This installs Bob, which manages Neovim separately. `--no-upgrade` skips routine
 
 On Linux or Windows, install the equivalent tools through your package manager. Parser builds require a C compiler, `curl`, `tar`, and tree-sitter CLI >= 0.26.1. Mason uses Go for `gopls` and Node/npm for `pyright` and `prettier`; it downloads the other configured servers as binaries. Neovim installs `stylua`, `clangd`, `rust-analyzer`, `lua-language-server`, `gopls`, `protols`, `pyright`, and `prettier` on first startup. Watch progress with `:Mason`; after a failed run, inspect `:MasonLog` and retry missing tools with `:MasonToolsInstall`.
 
+Swift uses [SourceKit-LSP](https://github.com/swiftlang/sourcekit-lsp), bundled with Xcode and Swift toolchains. It is enabled automatically when `sourcekit-lsp` is on `PATH`; open a `.swift` file to use the existing completion, diagnostics, and LSP keymaps.
+
 ## First-time setup
 
 ```bash

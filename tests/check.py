@@ -39,10 +39,11 @@ with tempfile.TemporaryDirectory(prefix="dotfiles-check-") as directory:
     (source / "tests").mkdir()
     (source / "tests/probe.txt").write_text("must stay local\n")
 
-    retired_fish = ("completions/fisher.fish", "conf.d/fish_frozen_theme.fish",
-                    "fish_plugins", "functions/fisher.fish")
-    for name in retired_fish:
-        path = target / ".config/fish" / name
+    retired_files = (".config/fish/completions/fisher.fish", ".config/fish/conf.d/fish_frozen_theme.fish",
+                     ".config/fish/fish_plugins", ".config/fish/functions/fisher.fish",
+                     ".config/nvim/plugin/render-markdown.lua")
+    for name in retired_files:
+        path = target / name
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text("retired\n")
 
@@ -68,8 +69,8 @@ with tempfile.TemporaryDirectory(prefix="dotfiles-check-") as directory:
     assert "Brewfile" not in managed, managed
     run(just + ["diff"], cwd=source, env=env)
     run(just + ["apply"], cwd=source, env=env)
-    for name in retired_fish:
-        assert not (target / ".config/fish" / name).exists(), name
+    for name in retired_files:
+        assert not (target / name).exists(), name
     assert (target / ".config/fish/themes/Dracula Official.theme").is_file()
     for name in (".config/nvim/init.lua", ".config/ghostty/config", ".config/fish/config.fish",
                  ".tmux.conf", ".vimrc", ".zshrc", ".ideavimrc",
