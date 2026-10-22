@@ -108,6 +108,9 @@ with tempfile.TemporaryDirectory(prefix="dotfiles-check-") as directory:
     print(result.stdout + result.stderr)
     print("PASS: native LSP workspace roots and project fallbacks")
 
+    run(nvim + ["-l", str(ROOT / "tests/snacks.lua")], env=env)
+    print("PASS: open-file search skips unnamed/terminal/unsaved/unlisted/deleted buffers")
+
     gate = ["--cmd", "luafile " + str(ROOT / "tests/nvim-check.lua")]
     env["DOTFILES_HEALTH_CHECKS"] = "vim.treesitter"
     run(nvim + gate, env=env)
