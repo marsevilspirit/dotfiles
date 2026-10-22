@@ -20,6 +20,10 @@ def run(args, *, cwd=ROOT, env=None, success=True, timeout=60):
     return result
 
 
+def without_git_env(environ):
+    return {key: value for key, value in environ.items() if not key.startswith("GIT_")}
+
+
 with tempfile.TemporaryDirectory(prefix="dotfiles-check-") as directory:
     base = Path(directory).resolve()
     source, target = base / "source", base / "target"
@@ -48,7 +52,7 @@ with tempfile.TemporaryDirectory(prefix="dotfiles-check-") as directory:
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text("retired\n")
 
-    env = dict(os.environ)
+    env = without_git_env(os.environ)
     for variable, name in (("XDG_CONFIG_HOME", "config"), ("XDG_DATA_HOME", "data"),
                            ("XDG_CACHE_HOME", "cache"), ("XDG_STATE_HOME", "state")):
         env[variable] = str(base / name)
@@ -213,11 +217,24 @@ with tempfile.TemporaryDirectory(prefix="dotfiles-check-") as directory:
                             result.stdout, result.stderr)
         print("PASS: fish PATH priority/order; inherited duplicates; repeated source/nested shells; missing local bin")
 
+        sentinel = base / "git sentinel"
+        # Bootstrap independently of the environment isolation under test.
+        sentinel_env = {key: value for key, value in env.items() if not key.startswith("GIT_")}
+        sentinel_env["HOME"] = str(target)
+        run(["git", "init", "-b", "sentinel", str(sentinel)], env=sentinel_env)
+        (sentinel / "sentinel.txt").write_text("must remain unchanged\n")
+        run(["git", "add", "sentinel.txt"], cwd=sentinel, env=sentinel_env)
+        run(["git", "-c", "user.name=Sentinel Check", "-c", "user.email=sentinel@example.invalid",
+             "commit", "-m", "Sentinel fixture"], cwd=sentinel, env=sentinel_env)
+        sentinel_before = {file.relative_to(sentinel): file.read_bytes()
+                           for file in sentinel.rglob("*") if file.is_file()}
         prompt_dir = base / "prompt directory"
         prompt_dir.mkdir()
         (minimal_bin / "uname").symlink_to(shutil.which("uname"))
-        prompt_env = {**env, "HOME": str(target), "TERM": "xterm-256color",
-                      "PATH": str(minimal_bin)}
+        prompt_env = without_git_env({**env, "HOME": str(target), "TERM": "xterm-256color",
+                                      "PATH": str(minimal_bin), "GIT_DIR": str(sentinel / ".git"),
+                                      "GIT_WORK_TREE": str(sentinel),
+                                      "GIT_INDEX_FILE": str(sentinel / ".git/index")})
         prompt_check = [fish, "-i", str(ROOT / "tests/fish-prompt.fish"), str(prompt_dir)]
         result = run(prompt_check, env=prompt_env)
         plain_prompt = re.sub(r"\x1b(?:\[[0-?]*[ -/]*[@-~]|\([A-Z])", "", result.stdout)
@@ -228,6 +245,9 @@ with tempfile.TemporaryDirectory(prefix="dotfiles-check-") as directory:
         run(["git", "init", "-b", "prompt-check", str(prompt_dir)], env=prompt_env)
         run(["git", "-c", "user.name=Prompt Check", "-c", "user.email=prompt@example.invalid",
              "commit", "--allow-empty", "-m", "Prompt fixture"], cwd=prompt_dir, env=prompt_env)
+        assert sentinel_before == {file.relative_to(sentinel): file.read_bytes()
+                                   for file in sentinel.rglob("*") if file.is_file()}, "Git fixture changed sentinel"
+        assert (prompt_dir / ".git").is_dir(), "Git environment redirected the prompt fixture"
         clean = run(prompt_check, env=prompt_env).stdout
         (prompt_dir / "untracked.txt").write_text("prompt fixture\n")
         untracked = run(prompt_check, env=prompt_env).stdout
@@ -255,7 +275,9 @@ with tempfile.TemporaryDirectory(prefix="dotfiles-check-") as directory:
                           'and test "$dotfiles_load_order" = "secrets local"', str(minimal_bin)],
                          cwd=prompt_dir, env={**env, "HOME": str(target)})
             assert "Unknown command" not in result.stderr, result.stderr
-        print("PASS: fish local overrides load last and once in both shell modes")
+        assert sentinel_before == {file.relative_to(sentinel): file.read_bytes()
+                                   for file in sentinel.rglob("*") if file.is_file()}, "Fish prompt changed sentinel"
+        print("PASS: fish local overrides load last and once in both shell modes; Git sentinel unchanged")
 
     if "--integration" in sys.argv:
         env["XDG_CONFIG_HOME"] = str(target / ".config")

@@ -21,6 +21,7 @@ Chezmoi maps `dot_*` and `dot_config/` names to paths under `$HOME` automaticall
 
 - [chezmoi](https://www.chezmoi.io/install/)
 - [just](https://github.com/casey/just) (optional, for shortcuts)
+- Fish >= 3.5 for the Fish configuration's built-in `path basename` command
 
 ```bash
 # macOS
