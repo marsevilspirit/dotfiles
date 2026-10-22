@@ -35,12 +35,20 @@ local function check(server, file, expected)
   vim.fn.bufload(bufnr)
   vim.bo[bufnr].filetype = vim.lsp.config[server].filetypes[1]
   local config = vim.lsp.config[server]
-  local root
+  local root, process_result
   if type(config.root_dir) == 'function' then
     local done = false
+    local system = vim.system
+    vim.system = function(command, options, callback)
+      return system(command, options, function(result)
+        process_result = result
+        callback(result)
+      end)
+    end
     config.root_dir(bufnr, function(dir)
       root, done = dir, true
     end)
+    vim.system = system
     assert(
       vim.wait(10000, function()
         return done
@@ -52,7 +60,9 @@ local function check(server, file, expected)
   end
   expected = expected and vim.fs.joinpath(base, expected)
   if root ~= expected then
-    errors[#errors + 1] = ('%s %s: expected %s, got %s'):format(server, file, tostring(expected), tostring(root))
+    errors[#errors + 1] = ('%s %s: expected %s, got %s; process: %s'):format(
+      server, file, tostring(expected), tostring(root), vim.inspect(process_result)
+    )
   end
 end
 
