@@ -28,5 +28,5 @@ map('n', '<leader>sr', function() Snacks.picker.resume() end, { desc = '[S]earch
 map('n', '<leader>s.', function() Snacks.picker.recent() end, { desc = '[S]earch Recent Files ("." for repeat)' })
 map('n', '<leader><leader>', function() Snacks.picker.buffers() end, { desc = '[ ] Find existing buffers' })
 map('n', '<leader>/', function() Snacks.picker.lines() end, { desc = '[/] Fuzzily search in current buffer' })
-map('n', '<leader>s/', function() Snacks.picker.grep { dirs = vim.tbl_map(vim.api.nvim_buf_get_name, vim.api.nvim_list_bufs()) } end, { desc = '[S]earch [/] in Open Files' })
+map('n', '<leader>s/', function() Snacks.picker.grep_buffers() end, { desc = '[S]earch [/] in Open Files' })
 map('n', '<leader>sn', function() Snacks.notifier.show_history() end, { desc = '[S]how [N]otification history' })
