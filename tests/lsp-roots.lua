@@ -11,7 +11,15 @@ package.preload['blink.cmp'] = function()
     end,
   }
 end
-vim.lsp.enable = function() end
+local enabled = {}
+vim.lsp.enable = function(names, value)
+  for _, name in ipairs(type(names) == 'table' and names or { names }) do
+    enabled[name] = value ~= false
+  end
+end
+vim.lsp.is_enabled = function(name)
+  return enabled[name] == true
+end
 dofile(vim.env.DOTFILES_SOURCE .. '/dot_config/nvim/plugin/lsp.lua')
 
 local base = vim.fs.joinpath(vim.env.DOTFILES_TEST_DIR, 'lsp roots')
@@ -109,12 +117,13 @@ for server, extension in pairs { gopls = 'go', rust_analyzer = 'rs' } do
   check(server, 'loose/file.' .. extension, nil)
 end
 
--- Hold the process callback until the original buffer has changed or closed.
+-- Hold the process callback until after buffer or LSP state changes.
 local system, executable = vim.system, vim.fn.executable
 vim.fn.executable = function(command)
   return command == 'cargo' and 1 or executable(command)
 end
 local function check_delayed(label, mutate, expected_calls)
+  vim.lsp.enable 'rust_analyzer'
   local file = 'repo/package/src/' .. label .. '.rs'
   write(file)
   local bufnr = vim.fn.bufadd(vim.fs.joinpath(base, file))
@@ -164,6 +173,9 @@ check_delayed('renamed', function(bufnr)
 end, 0)
 check_delayed('filetype', function(bufnr)
   vim.bo[bufnr].filetype = 'text'
+end, 0)
+check_delayed('disabled', function()
+  vim.lsp.enable('rust_analyzer', false)
 end, 0)
 vim.system, vim.fn.executable = system, executable
 

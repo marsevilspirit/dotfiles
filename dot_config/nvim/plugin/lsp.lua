@@ -82,7 +82,12 @@ vim.lsp.config('rust_analyzer', {
       },
       { cwd = root, text = true, timeout = 5000 },
       vim.schedule_wrap(function(result)
-        if not vim.api.nvim_buf_is_loaded(bufnr) or vim.api.nvim_buf_get_name(bufnr) ~= filename or vim.bo[bufnr].filetype ~= 'rust' then
+        if
+          not vim.lsp.is_enabled 'rust_analyzer'
+          or not vim.api.nvim_buf_is_loaded(bufnr)
+          or vim.api.nvim_buf_get_name(bufnr) ~= filename
+          or vim.bo[bufnr].filetype ~= 'rust'
+        then
           return
         end
         local manifest = result.code == 0 and vim.trim(result.stdout or '') or ''
