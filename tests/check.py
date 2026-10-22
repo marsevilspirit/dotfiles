@@ -90,6 +90,14 @@ with tempfile.TemporaryDirectory(prefix="dotfiles-check-") as directory:
     assert (source / "dot_probe.tmpl").read_text() == template, "Sync overwrote template"
     print("PASS: just apply/diff/managed/sync/sync-diff; templates preserved; logs excluded")
 
+    for names in (("path with spaces",), ("first path", "second 'quoted' path")):
+        for name in names:
+            (target / name).write_text(name + "\n")
+        run(just + ["add", *(str(target / name) for name in names)], cwd=source, env=env)
+        for name in names:
+            assert (source / name).read_text() == name + "\n", name
+    print("PASS: just add preserves single and multiple path arguments")
+
     nvim = ["nvim", "--clean", "--headless", "-i", "NONE"]
     env["DOTFILES_SOURCE"] = str(ROOT)
     env["DOTFILES_TEST_DIR"] = str(base)

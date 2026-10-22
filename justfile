@@ -35,5 +35,6 @@ sync-diff:
 	chezmoi re-add --source . --dry-run --verbose
 
 # Add or update paths from HOME (e.g. just add ~/.config/nvim/init.lua)
+[positional-arguments]
 add *paths:
-	chezmoi add --source . {{paths}}
+	chezmoi add --source . "$@"
