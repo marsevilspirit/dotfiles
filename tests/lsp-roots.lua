@@ -24,6 +24,8 @@ end
 
 local function check(server, file, expected)
   local bufnr = vim.fn.bufadd(vim.fs.joinpath(base, file))
+  vim.fn.bufload(bufnr)
+  vim.bo[bufnr].filetype = vim.lsp.config[server].filetypes[1]
   local config = vim.lsp.config[server]
   local root
   if type(config.root_dir) == 'function' then
@@ -106,5 +108,64 @@ for server, extension in pairs { gopls = 'go', rust_analyzer = 'rs' } do
   check(server, 'repo/loose/file.' .. extension, 'repo')
   check(server, 'loose/file.' .. extension, nil)
 end
+
+-- Hold the process callback until the original buffer has changed or closed.
+local system, executable = vim.system, vim.fn.executable
+vim.fn.executable = function(command)
+  return command == 'cargo' and 1 or executable(command)
+end
+local function check_delayed(label, mutate, expected_calls)
+  local file = 'repo/package/src/' .. label .. '.rs'
+  write(file)
+  local bufnr = vim.fn.bufadd(vim.fs.joinpath(base, file))
+  vim.fn.bufload(bufnr)
+  vim.bo[bufnr].filetype = 'rust'
+  vim.api.nvim_set_current_buf(bufnr)
+  local complete
+  vim.system = function(_, _, callback)
+    complete = callback
+  end
+  local calls, root = 0, nil
+  vim.lsp.config.rust_analyzer.root_dir(bufnr, function(dir)
+    calls, root = calls + 1, dir
+  end)
+  assert(complete, 'Cargo callback was not captured: ' .. label)
+  mutate(bufnr)
+  complete { code = 0, signal = 0, stdout = vim.fs.joinpath(base, 'repo/package/Cargo.toml') .. '\n', stderr = '' }
+  local drained = false
+  vim.schedule(function()
+    drained = true
+  end)
+  assert(
+    vim.wait(1000, function()
+      return drained
+    end),
+    'Callback queue did not drain: ' .. label
+  )
+  if calls ~= expected_calls or (calls == 1 and root ~= vim.fs.joinpath(base, 'repo/package')) then
+    errors[#errors + 1] = ('Delayed %s: expected %d root callbacks, got %d (%s)'):format(label, expected_calls, calls, tostring(root))
+  end
+end
+check_delayed('unchanged', function() end, 1)
+check_delayed('switched', function(bufnr)
+  vim.bo[bufnr].bufhidden = 'hide'
+  vim.api.nvim_set_current_buf(vim.api.nvim_create_buf(true, false))
+  assert(vim.api.nvim_buf_is_loaded(bufnr), 'Switching must keep the original buffer loaded')
+end, 1)
+check_delayed('deleted', function(bufnr)
+  vim.cmd('bdelete! ' .. bufnr)
+  assert(vim.api.nvim_buf_is_valid(bufnr) and not vim.api.nvim_buf_is_loaded(bufnr), 'bdelete must leave an unloaded buffer')
+end, 0)
+check_delayed('wiped', function(bufnr)
+  vim.api.nvim_buf_delete(bufnr, { force = true })
+end, 0)
+check_delayed('renamed', function(bufnr)
+  vim.api.nvim_buf_set_name(bufnr, vim.fs.joinpath(base, 'repo/rust/standalone/src/renamed.rs'))
+end, 0)
+check_delayed('filetype', function(bufnr)
+  vim.bo[bufnr].filetype = 'text'
+end, 0)
+vim.system, vim.fn.executable = system, executable
+
 assert(#errors == 0, table.concat(errors, '\n'))
-print 'lsp roots: workspace members share roots; nested/standalone projects and fallbacks stay separate'
+print 'lsp roots: workspace members share roots; project fallbacks and delayed buffer lifecycle checks passed'
