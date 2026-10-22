@@ -178,7 +178,7 @@ with tempfile.TemporaryDirectory(prefix="dotfiles-check-") as directory:
         for local_exists in (False, True):
             if local_exists:
                 local_bin.mkdir()
-            for local_inherited in (False, True):
+            for local_inherited in (0, 1, 3):
                 for cargo_inherited in (True, False):
                     initial_path = [str(minimal_bin), str(tail_bin)]
                     expected_path = [str(local_bin), str(cargo_bin), *initial_path]
@@ -187,6 +187,9 @@ with tempfile.TemporaryDirectory(prefix="dotfiles-check-") as directory:
                         expected_path = [str(local_bin), *initial_path]
                     if local_inherited:
                         initial_path.insert(1, str(local_bin))
+                    if local_inherited == 3:
+                        initial_path.insert(0, str(local_bin))
+                        initial_path.append(str(local_bin))
                     for flags in ([], ["-i"]):
                         go_path = ":".join([*expected_path, str(go_bin)])
                         parent_path = go_path if flags else ":".join(expected_path)
@@ -196,7 +199,7 @@ with tempfile.TemporaryDirectory(prefix="dotfiles-check-") as directory:
                         assert result.stdout.splitlines() == [parent_path] * 4 + [go_path], (
                             local_exists, local_inherited, cargo_inherited, flags,
                             result.stdout, result.stderr)
-        print("PASS: fish PATH priority/order; repeated source and nested shells; missing local bin")
+        print("PASS: fish PATH priority/order; inherited duplicates; repeated source/nested shells; missing local bin")
 
         (target / ".config/fish/secrets.fish").write_text("set -ga dotfiles_load_order secrets\n")
         (target / ".config/fish/local.fish").write_text(

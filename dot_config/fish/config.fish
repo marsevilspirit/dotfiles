@@ -36,12 +36,12 @@ if status is-interactive
     end
 end
 
+while set -l local_bin_index (contains -i -- "$HOME/.local/bin" $PATH)
+    set -e PATH[$local_bin_index]
+end
 fish_add_path --path "$HOME/.cargo/bin"
-if not fish_add_path --move --path "$HOME/.local/bin"
+if not fish_add_path --path "$HOME/.local/bin"
     # Keep the PATH entry even before the directory exists.
-    if set -l local_bin_index (contains -i -- "$HOME/.local/bin" $PATH)
-        set -e PATH[$local_bin_index]
-    end
     set -gx PATH "$HOME/.local/bin" $PATH
 end
 
