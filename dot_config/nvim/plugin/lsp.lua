@@ -55,13 +55,37 @@ vim.lsp.config('clangd', {
 vim.lsp.config('gopls', {
   cmd = { 'gopls' },
   filetypes = { 'go', 'gomod', 'gowork', 'gotmpl' },
-  root_markers = { 'go.mod', '.git' },
+  root_markers = { 'go.work', 'go.mod', '.git' },
 })
 
 vim.lsp.config('rust_analyzer', {
   cmd = { 'rust-analyzer' },
   filetypes = { 'rust' },
-  root_markers = { 'Cargo.toml', '.git' },
+  root_dir = function(bufnr, on_dir)
+    local root = vim.fs.root(bufnr, 'Cargo.toml')
+    if not root or vim.fn.executable 'cargo' ~= 1 then
+      on_dir(root or vim.fs.root(bufnr, '.git'))
+      return
+    end
+    -- Cargo knows workspace membership, including exclusions and nested workspaces.
+    vim.system(
+      {
+        'cargo',
+        'locate-project',
+        '--workspace',
+        '--message-format',
+        'plain',
+        '--offline',
+        '--manifest-path',
+        vim.fs.joinpath(root, 'Cargo.toml'),
+      },
+      { cwd = root, text = true, timeout = 5000 },
+      vim.schedule_wrap(function(result)
+        local manifest = result.code == 0 and vim.trim(result.stdout or '') or ''
+        on_dir(manifest ~= '' and vim.fs.dirname(manifest) or root)
+      end)
+    )
+  end,
 })
 
 vim.lsp.config('sourcekit', {
