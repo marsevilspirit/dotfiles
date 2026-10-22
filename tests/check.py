@@ -157,6 +157,8 @@ with tempfile.TemporaryDirectory(prefix="dotfiles-check-") as directory:
             assert (str(zsh_home / "custom go/bin") in shell_path.split(":")) == with_go, shell_path
         print("PASS: zsh starts with optional framework/Go present or absent")
 
+        # Isolate our startup from distribution vendor hooks such as snapd.
+        env["FISH_UNIT_TESTS_RUNNING"] = "1"
         fish = shutil.which("fish")
         assert fish, "Install fish to run shell checks"
         for file in (ROOT / "dot_config/fish").rglob("*.fish"):
