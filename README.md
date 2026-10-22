@@ -59,6 +59,16 @@ just apply                        # or: chezmoi apply --source .
 
 The Dracula theme is included in the source and loaded with `fish_config theme choose "Dracula Official"`. Update the theme in this repository, then apply it with chezmoi. Applying also removes the retired Fisher files and frozen theme snapshot listed in `.chezmoiremove`.
 
+### Zsh (optional Oh My Zsh)
+
+`dot_zshrc` works without Oh My Zsh or Go. [Oh My Zsh](https://github.com/ohmyzsh/ohmyzsh#manual-installation) is optional and is not installed by Brewfile. To enable the configured `clean` theme and `git`/`wakatime` plugins, clone the framework:
+
+```bash
+git clone https://github.com/ohmyzsh/ohmyzsh.git "$HOME/.oh-my-zsh"
+```
+
+Keep the repository-managed `~/.zshrc` and start a new Zsh session; no template copy is needed. When `go` is on `PATH`, Zsh also adds `$(go env GOPATH)/bin`. The `~/go/bin` and `~/.local/bin` entries are available without Go.
+
 ## Daily commands
 
 From the repository root:

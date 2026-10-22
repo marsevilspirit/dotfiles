@@ -106,6 +106,37 @@ with tempfile.TemporaryDirectory(prefix="dotfiles-check-") as directory:
 
     if os.name != "nt":
         run(["zsh", "-n", str(ROOT / "dot_zshrc")], env=env)
+        zsh = shutil.which("zsh")
+        for with_framework, with_go in ((False, False), (True, False),
+                                        (False, True), (True, True)):
+            zsh_home = base / f"zsh home-{with_framework}-{with_go}"
+            zsh_bin = zsh_home / "bin"
+            zsh_bin.mkdir(parents=True)
+            if with_framework:
+                framework = zsh_home / ".oh-my-zsh/oh-my-zsh.sh"
+                framework.parent.mkdir()
+                framework.write_text('dotfiles_omz_loaded="$ZSH_THEME:${(j:,:)plugins}"\n')
+            if with_go:
+                go = zsh_bin / "go"
+                go.write_text(
+                    '#!/bin/sh\n'
+                    '[ "$#" -eq 2 ] && [ "$1" = env ] && [ "$2" = GOPATH ] || exit 1\n'
+                    'printf \'%s\\n\' "$HOME/custom go"\n')
+                go.chmod(0o755)
+            result = run([zsh, "-f", "-c",
+                          'source "$1"; print -r -l -- "${dotfiles_omz_loaded:-}" '
+                          '"$PATH" "$EDITOR" "${aliases[vi]}"',
+                          "zsh-check", str(ROOT / "dot_zshrc")],
+                         env={"HOME": str(zsh_home), "PATH": str(zsh_bin)})
+            assert not result.stderr, result.stderr
+            loaded, shell_path, editor, vi = result.stdout.splitlines()
+            assert loaded == ("clean:git,wakatime" if with_framework else ""), result.stdout
+            assert editor == "nvim" and vi == "nvim", result.stdout
+            assert str(zsh_home / ".local/bin") in shell_path.split(":"), shell_path
+            assert str(zsh_home / "go/bin") in shell_path.split(":"), shell_path
+            assert (str(zsh_home / "custom go/bin") in shell_path.split(":")) == with_go, shell_path
+        print("PASS: zsh starts with optional framework/Go present or absent")
+
         fish = shutil.which("fish")
         assert fish, "Install fish to run shell checks"
         for file in (ROOT / "dot_config/fish").rglob("*.fish"):
