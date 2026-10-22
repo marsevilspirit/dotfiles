@@ -146,6 +146,7 @@ with tempfile.TemporaryDirectory(prefix="dotfiles-check-") as directory:
         for file in (ROOT / "dot_config/fish").rglob("*.fish"):
             run([fish, "--no-config", "-n", str(file)], env=env)
         env["XDG_CONFIG_HOME"] = str(target / ".config")
+        env["HOME"] = str(target)
         minimal_bin = base / "minimal-bin"
         minimal_bin.mkdir()
         (minimal_bin / "cat").symlink_to(shutil.which("cat"))
@@ -155,15 +156,60 @@ with tempfile.TemporaryDirectory(prefix="dotfiles-check-") as directory:
         assert "Unknown command" not in result.stderr, result.stderr
         print("PASS: fish/zsh syntax; fish starts without optional tools")
 
+        local_bin, cargo_bin, go_bin = target / ".local/bin", target / ".cargo/bin", base / "go/bin"
+        cargo_bin.mkdir(parents=True)
+        go_bin.mkdir(parents=True)
+        tail_bin = base / "last-bin"
+        tail_bin.mkdir()
+        (minimal_bin / "go").write_text(
+            '#!/bin/sh\n'
+            '[ "$#" = 2 ] && [ "$1" = env ] && [ "$2" = GOPATH ] || exit 1\n'
+            'printf "%s\\n" "$GOPATH"\n')
+        (minimal_bin / "go").chmod(0o755)
+        path_probe = """
+            printf '%s\\n' (string join : $PATH)
+            source "$argv[1]"
+            printf '%s\\n' (string join : $PATH)
+            source "$argv[1]"
+            printf '%s\\n' (string join : $PATH)
+            "$argv[2]" -c 'printf "%s\\n" (string join : $PATH)'
+            "$argv[2]" -i -c 'printf "%s\\n" (string join : $PATH)'
+        """
+        for local_exists in (False, True):
+            if local_exists:
+                local_bin.mkdir()
+            for local_inherited in (False, True):
+                for cargo_inherited in (True, False):
+                    initial_path = [str(minimal_bin), str(tail_bin)]
+                    expected_path = [str(local_bin), str(cargo_bin), *initial_path]
+                    if cargo_inherited:
+                        initial_path.append(str(cargo_bin))
+                        expected_path = [str(local_bin), *initial_path]
+                    if local_inherited:
+                        initial_path.insert(1, str(local_bin))
+                    for flags in ([], ["-i"]):
+                        go_path = ":".join([*expected_path, str(go_bin)])
+                        parent_path = go_path if flags else ":".join(expected_path)
+                        result = run([fish, *flags, "-c", path_probe,
+                                      str(target / ".config/fish/config.fish"), fish],
+                                     env={**env, "PATH": ":".join(initial_path)})
+                        assert result.stdout.splitlines() == [parent_path] * 4 + [go_path], (
+                            local_exists, local_inherited, cargo_inherited, flags,
+                            result.stdout, result.stderr)
+        print("PASS: fish PATH priority/order; repeated source and nested shells; missing local bin")
+
+        (target / ".config/fish/secrets.fish").write_text("set -ga dotfiles_load_order secrets\n")
         (target / ".config/fish/local.fish").write_text(
             "set -g fish_autosuggestion_enabled 0\n"
             "set -gx PATH /dotfiles-local-bin\n"
-            "set -ga dotfiles_local_loads loaded\n")
+            "set -ga dotfiles_local_loads loaded\n"
+            "set -ga dotfiles_load_order local\n")
         for flags in ([], ["-i"]):
             run([fish, *flags, "-c",
                  'test "$fish_autosuggestion_enabled" = 0; '
                  'and test "$PATH" = /dotfiles-local-bin; '
-                 'and test (count $dotfiles_local_loads) -eq 1'],
+                 'and test (count $dotfiles_local_loads) -eq 1; '
+                 'and test "$dotfiles_load_order" = "secrets local"'],
                 env={**env, "HOME": str(target)})
         print("PASS: fish local overrides load last and once in both shell modes")
 
