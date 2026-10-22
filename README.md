@@ -20,7 +20,7 @@ Chezmoi maps `dot_*` and `dot_config/` names to paths under `$HOME` automaticall
 ## Prerequisites
 
 - [chezmoi](https://www.chezmoi.io/install/)
-- [just](https://github.com/casey/just) >= 1.29 (optional, for shortcuts)
+- [just](https://github.com/casey/just) (optional, for shortcuts)
 
 ```bash
 # macOS
