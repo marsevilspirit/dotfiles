@@ -3,6 +3,7 @@
 import json
 import os
 from pathlib import Path
+import re
 import shutil
 import subprocess
 import sys
@@ -201,19 +202,48 @@ with tempfile.TemporaryDirectory(prefix="dotfiles-check-") as directory:
                             result.stdout, result.stderr)
         print("PASS: fish PATH priority/order; inherited duplicates; repeated source/nested shells; missing local bin")
 
+        prompt_dir = base / "prompt directory"
+        prompt_dir.mkdir()
+        (minimal_bin / "uname").symlink_to(shutil.which("uname"))
+        prompt_env = {**env, "HOME": str(target), "TERM": "xterm-256color",
+                      "PATH": str(minimal_bin)}
+        prompt_check = [fish, "-i", str(ROOT / "tests/fish-prompt.fish"), str(prompt_dir)]
+        result = run(prompt_check, env=prompt_env)
+        plain_prompt = re.sub(r"\x1b(?:\[[0-?]*[ -/]*[@-~]|\([A-Z])", "", result.stdout)
+        assert plain_prompt == "prompt-user:prompt directory/ $ " * 2, plain_prompt
+        assert "Unknown command" not in result.stderr, result.stderr
+
+        (minimal_bin / "git").symlink_to(shutil.which("git"))
+        run(["git", "init", "-b", "prompt-check", str(prompt_dir)], env=prompt_env)
+        run(["git", "-c", "user.name=Prompt Check", "-c", "user.email=prompt@example.invalid",
+             "commit", "--allow-empty", "-m", "Prompt fixture"], cwd=prompt_dir, env=prompt_env)
+        clean = run(prompt_check, env=prompt_env).stdout
+        (prompt_dir / "untracked.txt").write_text("prompt fixture\n")
+        untracked = run(prompt_check, env=prompt_env).stdout
+        assert "prompt-check" in clean and "prompt-check" in untracked, (clean, untracked)
+        assert clean != untracked, "Prompt must show untracked Git files"
+        print("PASS: fish prompt uses builtins, shows Git state, and avoids Git option events on redraw")
+
         (target / ".config/fish/secrets.fish").write_text("set -ga dotfiles_load_order secrets\n")
         (target / ".config/fish/local.fish").write_text(
             "set -g fish_autosuggestion_enabled 0\n"
+            "set -g __fish_git_prompt_showuntrackedfiles false\n"
+            "set -g __fish_git_prompt_color_branch magenta\n"
             "set -gx PATH /dotfiles-local-bin\n"
             "set -ga dotfiles_local_loads loaded\n"
             "set -ga dotfiles_load_order local\n")
         for flags in ([], ["-i"]):
-            run([fish, *flags, "-c",
-                 'test "$fish_autosuggestion_enabled" = 0; '
-                 'and test "$PATH" = /dotfiles-local-bin; '
-                 'and test (count $dotfiles_local_loads) -eq 1; '
-                 'and test "$dotfiles_load_order" = "secrets local"'],
-                env={**env, "HOME": str(target)})
+            result = run([fish, *flags, "-c",
+                          'test "$fish_autosuggestion_enabled" = 0; '
+                          'and test "$PATH" = /dotfiles-local-bin; '
+                          'and set -gx PATH "$argv[1]"; '
+                          'and fish_prompt >/dev/null; '
+                          'and test "$__fish_git_prompt_showuntrackedfiles" = false; '
+                          'and test "$__fish_git_prompt_color_branch" = magenta; '
+                          'and test (count $dotfiles_local_loads) -eq 1; '
+                          'and test "$dotfiles_load_order" = "secrets local"', str(minimal_bin)],
+                         cwd=prompt_dir, env={**env, "HOME": str(target)})
+            assert "Unknown command" not in result.stderr, result.stderr
         print("PASS: fish local overrides load last and once in both shell modes")
 
     if "--integration" in sys.argv:

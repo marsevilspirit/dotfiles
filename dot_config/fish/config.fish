@@ -8,6 +8,13 @@ if status is-interactive
 
     fish_config theme choose "Dracula Official"
 
+    set -g __fish_git_prompt_showuntrackedfiles 'true'
+    set -g __fish_git_prompt_showcolorhints 'true'
+    set -g __fish_git_prompt_show_informative_status 'true'
+    set -g __fish_git_prompt_color_prefix blue
+    set -g __fish_git_prompt_color_suffix blue
+    set -g __fish_git_prompt_color_branch yellow --bold
+
     if type -q go
         fish_add_path --append --path (go env GOPATH)/bin
     end
