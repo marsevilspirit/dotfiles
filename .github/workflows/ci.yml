@@ -87,3 +87,38 @@ jobs:
 
       - name: Regression checks and applied Neovim health
         run: python tests/check.py --integration
+
+  cargo-root-probe:
+    name: Cargo root probe (${{ matrix.probe }})
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 8
+    strategy:
+      fail-fast: false
+      matrix:
+        probe: [1, 2, 3]
+    defaults:
+      run:
+        shell: pwsh
+    env:
+      DOTFILES_SOURCE: ${{ github.workspace }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Neovim nightly
+        run: |
+          Invoke-WebRequest https://github.com/neovim/neovim/releases/download/nightly/nvim-win64.zip -OutFile "$env:RUNNER_TEMP/nvim.zip"
+          Expand-Archive "$env:RUNNER_TEMP/nvim.zip" "$env:RUNNER_TEMP"
+          "$env:RUNNER_TEMP/nvim-win64/bin" >> $env:GITHUB_PATH
+      - name: Probe cold Cargo workspace lookup
+        run: |
+          Get-ChildItem Env:GIT_* | Remove-Item
+          $env:DOTFILES_TEST_DIR = Join-Path ([IO.Path]::GetTempPath()) ("dotfiles-check-" + [guid]::NewGuid().ToString("N").Substring(0, 8))
+          $env:XDG_CONFIG_HOME = Join-Path $env:DOTFILES_TEST_DIR config
+          $env:XDG_DATA_HOME = Join-Path $env:DOTFILES_TEST_DIR data
+          $env:XDG_CACHE_HOME = Join-Path $env:DOTFILES_TEST_DIR cache
+          $env:XDG_STATE_HOME = Join-Path $env:DOTFILES_TEST_DIR state
+          $env:NVIM_LOG_FILE = Join-Path $env:DOTFILES_TEST_DIR nvim.log
+          foreach ($path in @($env:XDG_CONFIG_HOME, $env:XDG_DATA_HOME, $env:XDG_CACHE_HOME, $env:XDG_STATE_HOME)) {
+            New-Item -ItemType Directory -Force -Path $path | Out-Null
+          }
+          nvim --clean --headless -i NONE --cmd "lua assert(vim.fn.executable('cargo') == 1, 'Cargo is missing')" -l tests/lsp-roots.lua
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
