@@ -69,6 +69,8 @@ vim.lsp.config('rust_analyzer', {
     end
     local filename = vim.api.nvim_buf_get_name(bufnr)
     -- Cargo knows workspace membership, including exclusions and nested workspaces.
+    -- Refresh the cached clock so startup work cannot consume its timeout.
+    vim.uv.update_time()
     vim.system(
       {
         'cargo',

@@ -30,7 +30,7 @@ local function write(path, lines)
   vim.fn.writefile(lines or {}, file)
 end
 
-local function check(server, file, expected)
+local function check(server, file, expected, before_lookup)
   local bufnr = vim.fn.bufadd(vim.fs.joinpath(base, file))
   vim.fn.bufload(bufnr)
   vim.bo[bufnr].filetype = vim.lsp.config[server].filetypes[1]
@@ -46,6 +46,9 @@ local function check(server, file, expected)
         process_info = { command = command, executable = executable, cwd = options.cwd, elapsed_ms = (vim.uv.hrtime() - started) / 1e6 }
         callback(result)
       end)
+    end
+    if before_lookup then
+      before_lookup()
     end
     config.root_dir(bufnr, function(dir)
       root, done = dir, true
@@ -108,7 +111,11 @@ write('repo/broken/Cargo.toml', { '[package' })
 write 'repo/broken/src/lib.rs'
 
 if vim.fn.executable 'cargo' == 1 then
-  check('rust_analyzer', 'repo/rust/crates/a/src/lib.rs', 'repo/rust')
+  -- Synchronous startup must not consume Cargo's asynchronous timeout.
+  check('rust_analyzer', 'repo/rust/crates/a/src/lib.rs', 'repo/rust', function()
+    vim.uv.update_time()
+    vim.uv.sleep(5500)
+  end)
   check('rust_analyzer', 'repo/rust/crates/b/src/lib.rs', 'repo/rust')
   check('rust_analyzer', 'repo/rust/nested/inner/src/lib.rs', 'repo/rust/nested')
   check('rust_analyzer', 'repo/rust/standalone/src/lib.rs', 'repo/rust/standalone')
