@@ -35,15 +35,13 @@ local function check(server, file, expected, before_lookup)
   vim.fn.bufload(bufnr)
   vim.bo[bufnr].filetype = vim.lsp.config[server].filetypes[1]
   local config = vim.lsp.config[server]
-  local root, process_result, process_info
+  local root, process_result
   if type(config.root_dir) == 'function' then
     local done = false
     local system = vim.system
     vim.system = function(command, options, callback)
-      local started, executable = vim.uv.hrtime(), vim.fn.exepath(command[1])
       return system(command, options, function(result)
         process_result = result
-        process_info = { command = command, executable = executable, cwd = options.cwd, elapsed_ms = (vim.uv.hrtime() - started) / 1e6 }
         callback(result)
       end)
     end
@@ -62,9 +60,6 @@ local function check(server, file, expected, before_lookup)
     )
   else
     root = vim.fs.root(bufnr, config.root_markers)
-  end
-  if process_result then
-    print(vim.inspect { file = file, info = process_info, result = process_result })
   end
   expected = expected and vim.fs.joinpath(base, expected)
   if root ~= expected then
@@ -201,8 +196,5 @@ check_delayed('disabled', function()
 end, 0)
 vim.system, vim.fn.executable = system, executable
 
-if vim.fn.executable 'cargo' == 1 then
-  print('Cargo version: ' .. vim.inspect(vim.system({ 'cargo', '-Vv' }, { text = true }):wait(10000)))
-end
 assert(#errors == 0, table.concat(errors, '\n'))
 print 'lsp roots: workspace members share roots; project fallbacks and delayed buffer lifecycle checks passed'
