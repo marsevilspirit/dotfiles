@@ -1,3 +1,5 @@
+set positional-arguments
+
 [private]
 default:
 	@just --list
@@ -36,4 +38,4 @@ sync-diff:
 
 # Add or update paths from HOME (e.g. just add ~/.config/nvim/init.lua)
 add *paths:
-	chezmoi add --source . {{paths}}
+	chezmoi add --source . "$@"

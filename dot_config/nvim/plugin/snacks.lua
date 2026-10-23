@@ -28,5 +28,14 @@ map('n', '<leader>sr', function() Snacks.picker.resume() end, { desc = '[S]earch
 map('n', '<leader>s.', function() Snacks.picker.recent() end, { desc = '[S]earch Recent Files ("." for repeat)' })
 map('n', '<leader><leader>', function() Snacks.picker.buffers() end, { desc = '[ ] Find existing buffers' })
 map('n', '<leader>/', function() Snacks.picker.lines() end, { desc = '[/] Fuzzily search in current buffer' })
-map('n', '<leader>s/', function() Snacks.picker.grep { dirs = vim.tbl_map(vim.api.nvim_buf_get_name, vim.api.nvim_list_bufs()) } end, { desc = '[S]earch [/] in Open Files' })
+map('n', '<leader>s/', function()
+  -- Without any file paths, the native picker makes rg search the working directory.
+  for _, buf in ipairs(vim.fn.getbufinfo { buflisted = 1 }) do
+    if vim.fn.filereadable(buf.name) == 1 then
+      Snacks.picker.grep_buffers()
+      return
+    end
+  end
+  vim.notify('No open files to search', vim.log.levels.INFO)
+end, { desc = '[S]earch [/] in Open Files' })
 map('n', '<leader>sn', function() Snacks.notifier.show_history() end, { desc = '[S]how [N]otification history' })

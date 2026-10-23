@@ -3,15 +3,9 @@ function fish_prompt
     set -l normal (set_color normal)
     set -l white (set_color -o white --bold)
 
-    set -l name $white(whoami)
-    set -l cwd $cyan(basename (prompt_pwd))/
+    set -l name $white$USER
+    set -l cwd $cyan(path basename -- (prompt_pwd))/
 
-    set -g __fish_git_prompt_showuntrackedfiles 'true'
-    set -g __fish_git_prompt_showcolorhints 'true'
-    set -g __fish_git_prompt_show_informative_status 'true'
-    set -g __fish_git_prompt_color_prefix blue
-    set -g __fish_git_prompt_color_suffix blue
-    set -g __fish_git_prompt_color_branch yellow --bold
     set -l git_info (fish_git_prompt)
 
     set -l dollar "$normal\$"

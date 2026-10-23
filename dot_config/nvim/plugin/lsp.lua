@@ -55,13 +55,48 @@ vim.lsp.config('clangd', {
 vim.lsp.config('gopls', {
   cmd = { 'gopls' },
   filetypes = { 'go', 'gomod', 'gowork', 'gotmpl' },
-  root_markers = { 'go.mod', '.git' },
+  root_markers = { 'go.work', 'go.mod', '.git' },
 })
 
 vim.lsp.config('rust_analyzer', {
   cmd = { 'rust-analyzer' },
   filetypes = { 'rust' },
-  root_markers = { 'Cargo.toml', '.git' },
+  root_dir = function(bufnr, on_dir)
+    local root = vim.fs.root(bufnr, 'Cargo.toml')
+    if not root or vim.fn.executable 'cargo' ~= 1 then
+      on_dir(root or vim.fs.root(bufnr, '.git'))
+      return
+    end
+    local filename = vim.api.nvim_buf_get_name(bufnr)
+    -- Cargo knows workspace membership, including exclusions and nested workspaces.
+    -- Refresh the cached clock so startup work cannot consume its timeout.
+    vim.uv.update_time()
+    vim.system(
+      {
+        'cargo',
+        'locate-project',
+        '--workspace',
+        '--message-format',
+        'plain',
+        '--offline',
+        '--manifest-path',
+        vim.fs.joinpath(root, 'Cargo.toml'),
+      },
+      { cwd = root, text = true, timeout = 5000 },
+      vim.schedule_wrap(function(result)
+        if
+          not vim.lsp.is_enabled 'rust_analyzer'
+          or not vim.api.nvim_buf_is_loaded(bufnr)
+          or vim.api.nvim_buf_get_name(bufnr) ~= filename
+          or vim.bo[bufnr].filetype ~= 'rust'
+        then
+          return
+        end
+        local manifest = result.code == 0 and vim.trim(result.stdout or '') or ''
+        on_dir(manifest ~= '' and vim.fs.dirname(manifest) or root)
+      end)
+    )
+  end,
 })
 
 vim.lsp.config('sourcekit', {
